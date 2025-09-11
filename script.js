@@ -1,0 +1,934 @@
+// Loading Screen Animation - Working version with 2 second display
+console.log('Script starting...');
+
+// Initialize hamburger menu immediately on DOM load (fix for index.html)
+document.addEventListener('DOMContentLoaded', () => {
+    console.log('DOM Content Loaded');
+    
+    // Initialize hamburger menu immediately for all pages
+    initHamburgerMenu();
+    
+    const loadingScreen = document.getElementById('loading-screen');
+    console.log('Loading screen element:', loadingScreen);
+    
+    if (loadingScreen) {
+        console.log('Starting 2 second timer...');
+        // Show badge for exactly 2 seconds
+        setTimeout(() => {
+            console.log('2 seconds passed, adding hide class...');
+            // Add the hide class to trigger CSS transition
+            loadingScreen.classList.add('hide');
+            
+            // After zoom completes, hide loading screen completely
+            setTimeout(() => {
+                console.log('Transition complete, hiding loading screen...');
+                loadingScreen.style.display = 'none';
+                initPageAnimations();
+            }, 1500); // Wait for CSS transition to complete
+        }, 2000); // Show logo for 2 seconds
+    } else {
+        console.error('Loading screen element not found!');
+        // Fallback if loading screen not found
+        initPageAnimations();
+    }
+});
+
+// Backup event listener for window load
+window.addEventListener('load', () => {
+    console.log('Window loaded');
+    const loadingScreen = document.getElementById('loading-screen');
+    
+    // Only run if the loading screen is still visible (DOMContentLoaded didn't work)
+    if (loadingScreen && !loadingScreen.classList.contains('hide')) {
+        console.log('Backup timer starting...');
+        setTimeout(() => {
+            console.log('Backup: adding hide class...');
+            loadingScreen.classList.add('hide');
+            
+            setTimeout(() => {
+                console.log('Backup: hiding loading screen...');
+                loadingScreen.style.display = 'none';
+                initPageAnimations();
+            }, 1500);
+        }, 2000);
+    }
+});
+
+// Separate hamburger menu initialization function
+function initHamburgerMenu() {
+    console.log('Initializing hamburger menu...');
+    
+    // Mobile menu toggle
+    const hamburger = document.querySelector('.hamburger');
+    const navMenu = document.querySelector('.nav-menu');
+
+    if (hamburger && navMenu) {
+        console.log('Hamburger menu elements found, setting up event listeners...');
+        
+        // Remove any existing event listeners to prevent duplicates
+        hamburger.removeEventListener('click', handleHamburgerClick);
+        
+        // Add click event listener
+        hamburger.addEventListener('click', handleHamburgerClick);
+
+        // Close mobile menu when clicking a link
+        document.querySelectorAll('.nav-link').forEach(link => {
+            link.addEventListener('click', () => {
+                hamburger.classList.remove('active');
+                navMenu.classList.remove('active');
+            });
+        });
+    } else {
+        console.log('Hamburger menu elements not found');
+    }
+}
+
+// Hamburger click handler function
+function handleHamburgerClick(e) {
+    e.preventDefault();
+    const hamburger = document.querySelector('.hamburger');
+    const navMenu = document.querySelector('.nav-menu');
+    
+    if (hamburger && navMenu) {
+        hamburger.classList.toggle('active');
+        navMenu.classList.toggle('active');
+        console.log('Hamburger menu toggled');
+    }
+}
+
+// Initialize page animations
+function initPageAnimations() {
+    // Smooth scroll behavior for internal links only
+    document.querySelectorAll('.nav-link').forEach(link => {
+        link.addEventListener('click', (e) => {
+            const href = link.getAttribute('href');
+            
+            // Only prevent default and use smooth scroll for internal anchor links (starting with #)
+            if (href.startsWith('#')) {
+                e.preventDefault();
+                const targetSection = document.querySelector(href);
+                
+                if (targetSection) {
+                    targetSection.scrollIntoView({ behavior: 'smooth' });
+                }
+            }
+            // For external links (like about.html, recruitment.html), allow normal navigation
+            // No preventDefault() needed - browser will handle normally
+        });
+    });
+
+    // Initialize hamburger menu (in case it wasn't initialized earlier)
+    initHamburgerMenu();
+
+    // Cards stagger animation
+    animateCards();
+
+    // Form handling
+    initContactForm();
+
+    // Initialize landing phase transition
+    initLandingTransition();
+    
+    // Initialize triangle sponsor carousel
+    initTriangleCarousel();
+    
+    // Initialize recruitment page functionality
+    initRecruitmentPage();
+    
+    // Initialize custom scroll behavior (only for pages with .section elements)
+    initCustomScrollBehavior();
+    
+    // Initialize tournament image modal functionality
+    initTournamentImageModal();
+
+    // Initialize academy image modal functionality
+    initAcademyImageModal();
+}
+
+// Initialize academy image modal functionality
+function initAcademyImageModal() {
+    // Only run on academy page
+    if (!document.querySelector('.academy-structure-section')) return;
+
+    const academyImageContainer = document.querySelector('.academy-structure-image');
+    let imageModal = null;
+
+    // Create modal HTML structure
+    function createModal() {
+        const modal = document.createElement('div');
+        modal.className = 'image-modal';
+        modal.innerHTML = `
+            <div class="modal-image-container">
+                <span class="close-image-modal">&times;</span>
+                <img class="modal-image" src="" alt="">
+            </div>
+        `;
+        document.body.appendChild(modal);
+        return modal;
+    }
+
+    // Open modal with image
+    function openModal(imageSrc, imageAlt) {
+        if (!imageModal) {
+            imageModal = createModal();
+        }
+
+        const modalImage = imageModal.querySelector('.modal-image');
+        modalImage.src = imageSrc;
+        modalImage.alt = imageAlt;
+
+        imageModal.classList.add('show');
+        document.body.classList.add('modal-open');
+
+        // Add event listeners for closing
+        const closeBtn = imageModal.querySelector('.close-image-modal');
+        closeBtn.addEventListener('click', closeModal);
+
+        // Close on background click
+        imageModal.addEventListener('click', (e) => {
+            if (e.target === imageModal) {
+                closeModal();
+            }
+        });
+
+        // Close on ESC key
+        document.addEventListener('keydown', handleEscKey);
+    }
+
+    // Close modal
+    function closeModal() {
+        if (imageModal) {
+            imageModal.classList.remove('show');
+            document.body.classList.remove('modal-open');
+
+            // Remove ESC key listener
+            document.removeEventListener('keydown', handleEscKey);
+
+            // Clean up modal after animation
+            setTimeout(() => {
+                if (imageModal && imageModal.parentNode) {
+                    imageModal.parentNode.removeChild(imageModal);
+                    imageModal = null;
+                }
+            }, 300);
+        }
+    }
+
+    // Handle ESC key press
+    function handleEscKey(e) {
+        if (e.key === 'Escape') {
+            closeModal();
+        }
+    }
+
+    // Function to add event listeners for fullscreen modal on mobile only
+    function addFullscreenListeners() {
+        if (!academyImageContainer) return;
+
+        academyImageContainer.addEventListener('click', (e) => {
+            e.preventDefault();
+            const img = academyImageContainer.querySelector('img');
+            if (img) {
+                openModal(img.src, img.alt);
+            }
+        });
+
+        academyImageContainer.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                const img = academyImageContainer.querySelector('img');
+                if (img) {
+                    openModal(img.src, img.alt);
+                }
+            }
+        });
+
+        academyImageContainer.setAttribute('tabindex', '0');
+        academyImageContainer.setAttribute('role', 'button');
+        academyImageContainer.setAttribute('aria-label', 'View image in fullscreen');
+    }
+
+    // Function to remove event listeners
+    function removeFullscreenListeners() {
+        if (!academyImageContainer) return;
+
+        academyImageContainer.removeEventListener('click', openModal);
+        academyImageContainer.removeEventListener('keydown', openModal);
+        academyImageContainer.removeAttribute('tabindex');
+        academyImageContainer.removeAttribute('role');
+        academyImageContainer.removeAttribute('aria-label');
+    }
+
+    // Media query to detect mobile devices
+    const mobileMediaQuery = window.matchMedia('(max-width: 768px)');
+
+    // Function to handle media query changes
+    function handleMediaChange(e) {
+        if (e.matches) {
+            addFullscreenListeners();
+        } else {
+            removeFullscreenListeners();
+        }
+    }
+
+    // Initial check
+    if (mobileMediaQuery.matches) {
+        addFullscreenListeners();
+    }
+
+    // Listen for changes
+    mobileMediaQuery.addListener(handleMediaChange);
+}
+
+// Animate cards with stagger effect
+function animateCards() {
+    const cards = document.querySelectorAll('.card');
+    
+    cards.forEach((card, index) => {
+        setTimeout(() => {
+            card.style.animationDelay = `${index * 0.2}s`;
+        }, 100);
+    });
+}
+
+// 3-Sponsor Horizontal Carousel
+function initTriangleCarousel() {
+    const sponsorSlides = document.querySelectorAll('.sponsor-slide');
+    const progressDots = document.querySelectorAll('.progress-dot');
+    
+    if (sponsorSlides.length === 0) return;
+    
+    let currentIndex = 0;
+    const totalSlides = sponsorSlides.length;
+    let autoRotateInterval;
+    
+    function updateCarousel() {
+        // Remove all positioning classes from all slides
+        sponsorSlides.forEach(slide => {
+            slide.classList.remove('focal', 'side-left', 'side-right');
+        });
+        
+        // Calculate positions for 3-sponsor view
+        // Current focal sponsor (center)
+        sponsorSlides[currentIndex].classList.add('focal');
+        
+        // Left side sponsor (previous in sequence)
+        const leftIndex = (currentIndex - 1 + totalSlides) % totalSlides;
+        sponsorSlides[leftIndex].classList.add('side-left');
+        
+        // Right side sponsor (next in sequence)
+        const rightIndex = (currentIndex + 1) % totalSlides;
+        sponsorSlides[rightIndex].classList.add('side-right');
+        
+        // Update progress dots
+        progressDots.forEach((dot, index) => {
+            dot.classList.toggle('active', index === currentIndex);
+        });
+    }
+    
+    function nextSponsor() {
+        currentIndex = (currentIndex + 1) % totalSlides;
+        updateCarousel();
+    }
+    
+    function startAutoRotate() {
+        if (autoRotateInterval) clearInterval(autoRotateInterval);
+        // Continuous infinite loop - always moving to the right
+        autoRotateInterval = setInterval(nextSponsor, 5000); // 5 seconds per sponsor
+    }
+    
+    function stopAutoRotate() {
+        if (autoRotateInterval) clearInterval(autoRotateInterval);
+    }
+    
+    // Optional: Allow manual control by clicking on progress dots
+    progressDots.forEach((dot, index) => {
+        dot.addEventListener('click', () => {
+            stopAutoRotate();
+            currentIndex = index;
+            updateCarousel();
+            startAutoRotate();
+        });
+    });
+    
+    // Optional: Pause on hover over the carousel area
+    const sponsorsContainer = document.querySelector('.sponsors-container');
+    if (sponsorsContainer) {
+        sponsorsContainer.addEventListener('mouseenter', stopAutoRotate);
+        sponsorsContainer.addEventListener('mouseleave', startAutoRotate);
+    }
+    
+    // Initialize carousel
+    updateCarousel();
+    
+    // Start auto-rotation after a brief delay to let animations settle
+    setTimeout(() => {
+        startAutoRotate();
+    }, 1000);
+}
+
+// Recruitment page functionality
+function initRecruitmentPage() {
+    // Only run on recruitment page
+    if (!document.querySelector('.recruitment-container')) return;
+    
+    const testimonialCards = document.querySelectorAll('.testimonial-card');
+    const videoModal = document.getElementById('videoModal');
+    const closeModal = document.querySelector('.close-modal');
+    const modalPlayerName = document.getElementById('modalPlayerName');
+    const modalPlayerPosition = document.getElementById('modalPlayerPosition');
+    const modalTestimonialText = document.getElementById('modalTestimonialText');
+    const modalVideo = document.getElementById('modalVideo');
+    const modalVideoSource = document.getElementById('modalVideoSource');
+    
+    // Testimonial data
+    const testimonialData = {
+        1: {
+            name: "Blaine Mabie",
+            position: "Midfielder - Senior Team",
+            testimonial: "Wanaka FC transformed my game and gave me opportunities I never thought possible. The coaching staff here are world-class, and the facilities are incredible. I've grown not just as a player, but as a person. The club's commitment to developing young talent is unmatched, and I'm proud to be part of this amazing family.",
+            videoSrc: "Blaine video.mp4"
+        },
+        2: {
+            name: "Phoenix Coursey",
+            position: "Forward - Women's Team",
+            testimonial: "The coaching staff here are incredible. They helped me reach my full potential and supported me through every challenge. The women's program at Wanaka FC is truly special - we have equal opportunities, excellent facilities, and a supportive environment that allows us to excel both on and off the pitch.",
+            videoSrc: "Phoenix.mp4"
+        },
+        3: {
+            name: "Louis Wickremesekera",
+            position: "Defender - Academy Graduate",
+            testimonial: "From academy to first team, Wanaka FC supported me every step of the way. The pathway from youth to senior level is clear and well-structured. The coaches believe in developing players holistically, focusing on technical skills, tactical understanding, and character development.",
+            videoSrc: "Prolerus-Test-Video.mp4"
+        },
+        4: {
+            name: "Edy Belingher",
+            position: "Goalkeeper - Youth Team",
+            testimonial: "The facilities and training programs are world-class. I've improved so much since joining Wanaka FC. The goalkeeper coaching is exceptional, and I feel prepared for every match. The club's investment in youth development shows their commitment to building a strong future.",
+            videoSrc: "Edy Video.mp4"
+        },
+        5: {
+            name: "David Park",
+            position: "Winger - Former Player",
+            testimonial: "Wanaka FC gave me the foundation for my professional career. The skills, discipline, and values I learned here have stayed with me throughout my journey. Even after moving on to professional football, I still consider Wanaka FC my home club.",
+            videoSrc: "david-park.mp4"
+        },
+        6: {
+            name: "Lisa Anderson",
+            position: "Captain - Senior Women's Team",
+            testimonial: "The club culture here is amazing. We're not just teammates, we're family. The leadership opportunities, the competitive environment, and the support from the entire club community make Wanaka FC a special place to play football.",
+            videoSrc: "lisa-anderson.mp4"
+        }
+    };
+    
+    // Add click event listeners to testimonial cards
+    testimonialCards.forEach(card => {
+        card.addEventListener('click', () => {
+            const videoId = card.getAttribute('data-video');
+            const data = testimonialData[videoId];
+            
+            if (data) {
+                openVideoModal(data);
+            }
+        });
+    });
+    
+    // Close modal functionality
+    if (closeModal) {
+        closeModal.addEventListener('click', () => {
+            closeVideoModal();
+        });
+    }
+    
+    // Close modal when clicking outside
+    window.addEventListener('click', (event) => {
+        if (event.target === videoModal) {
+            closeVideoModal();
+        }
+    });
+    
+    // Handle recruitment form submission
+    const recruitmentForm = document.querySelector('.recruitment-form');
+    if (recruitmentForm) {
+        recruitmentForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            
+            const formData = new FormData(recruitmentForm);
+            const data = Object.fromEntries(formData);
+            
+            // Basic validation
+            if (!data.firstName || !data.lastName || !data.email || !data.phone || 
+                !data.age || !data.position || !data.experience || !data.motivation) {
+                alert('Please fill in all required fields.');
+                return;
+            }
+            
+            const submitBtn = recruitmentForm.querySelector('.submit-btn');
+            const originalText = submitBtn.textContent;
+            
+            submitBtn.textContent = 'Submitting...';
+            submitBtn.disabled = true;
+            
+            // Simulate form submission
+            setTimeout(() => {
+                alert('Thank you for your application! We\'ll review your information and get back to you within 48 hours.');
+                recruitmentForm.reset();
+                submitBtn.textContent = originalText;
+                submitBtn.disabled = false;
+            }, 2000);
+        });
+    }
+    
+    // Open video modal
+    function openVideoModal(data) {
+        modalPlayerName.textContent = data.name;
+        modalPlayerPosition.textContent = data.position;
+        modalTestimonialText.textContent = data.testimonial;
+        
+        // Set video source
+        modalVideoSource.src = data.videoSrc;
+        modalVideo.load(); // Reload video with new source
+        
+        // Show loading state
+        showVideoLoading();
+        
+        // Handle video load events
+        modalVideo.addEventListener('loadeddata', () => {
+            hideVideoLoading();
+            modalVideo.style.display = 'block';
+        });
+        
+        modalVideo.addEventListener('error', () => {
+            showVideoError();
+        });
+        
+        videoModal.style.display = 'block';
+    }
+    
+    // Close video modal
+    function closeVideoModal() {
+        videoModal.style.display = 'none';
+        
+        // Pause and reset video
+        if (modalVideo) {
+            modalVideo.pause();
+            modalVideo.currentTime = 0;
+            modalVideo.style.display = 'none';
+        }
+        
+        // Hide loading/error states
+        hideVideoLoading();
+        hideVideoError();
+    }
+    
+    // Show video loading state
+    function showVideoLoading() {
+        const videoContainer = document.querySelector('.video-container');
+        let loadingDiv = videoContainer.querySelector('.video-loading');
+        
+        if (!loadingDiv) {
+            loadingDiv = document.createElement('div');
+            loadingDiv.className = 'video-loading';
+            loadingDiv.innerHTML = '<i class="fas fa-spinner"></i>';
+            videoContainer.insertBefore(loadingDiv, videoContainer.firstChild);
+        }
+        
+        loadingDiv.style.display = 'flex';
+        modalVideo.style.display = 'none';
+    }
+    
+    // Hide video loading state
+    function hideVideoLoading() {
+        const loadingDiv = document.querySelector('.video-loading');
+        if (loadingDiv) {
+            loadingDiv.style.display = 'none';
+        }
+    }
+    
+    // Show video error state
+    function showVideoError() {
+        const videoContainer = document.querySelector('.video-container');
+        let errorDiv = videoContainer.querySelector('.video-error');
+        
+        if (!errorDiv) {
+            errorDiv = document.createElement('div');
+            errorDiv.className = 'video-error';
+            errorDiv.innerHTML = `
+                <i class="fas fa-exclamation-triangle"></i>
+                <p>Video could not be loaded. Please check that the video file exists.</p>
+            `;
+            videoContainer.insertBefore(errorDiv, videoContainer.firstChild);
+        }
+        
+        errorDiv.style.display = 'flex';
+        modalVideo.style.display = 'none';
+        hideVideoLoading();
+    }
+    
+    // Hide video error state
+    function hideVideoError() {
+        const errorDiv = document.querySelector('.video-error');
+        if (errorDiv) {
+            errorDiv.style.display = 'none';
+        }
+    }
+}
+
+// Contact form handling with SMTP2GO integration
+function initContactForm() {
+    const forms = document.querySelectorAll('.contact-form');
+    
+    // Only initialize if contact forms exist
+    if (forms.length === 0) return;
+    
+    forms.forEach(form => {
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const formData = new FormData(form);
+            const data = Object.fromEntries(formData);
+            
+            // Validate required fields
+            if (!data.name || !data.email || !data.message) {
+                showFormMessage(form, 'Please fill in all required fields.', 'error');
+                return;
+            }
+            
+            // Validate email format
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(data.email)) {
+                showFormMessage(form, 'Please enter a valid email address.', 'error');
+                return;
+            }
+            
+            // Validate message length
+            if (data.message.length < 10) {
+                showFormMessage(form, 'Please enter a message with at least 10 characters.', 'error');
+                return;
+            }
+            
+            const submitBtn = form.querySelector('.submit-btn');
+            const originalText = submitBtn.textContent;
+            
+            // Update button state
+            submitBtn.textContent = 'Sending...';
+            submitBtn.disabled = true;
+            
+            // Determine which page the form is on
+            const currentPage = getCurrentPageName();
+            
+            // Prepare data for submission
+            const submissionData = {
+                name: data.name.trim(),
+                email: data.email.trim(),
+                message: data.message.trim(),
+                page: currentPage
+            };
+            
+            try {
+                // Send form data to PHP handler
+                const response = await fetch('send-email.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(submissionData)
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    showFormMessage(form, result.message, 'success');
+                    form.reset();
+                } else {
+                    showFormMessage(form, result.message, 'error');
+                }
+                
+            } catch (error) {
+                console.error('Form submission error:', error);
+                showFormMessage(form, 'Sorry, there was an error sending your message. Please try again later or contact us directly at info@wanakafootball.nz', 'error');
+            } finally {
+                // Reset button state
+                submitBtn.textContent = originalText;
+                submitBtn.disabled = false;
+            }
+        });
+    });
+}
+
+// Helper function to show form messages
+function showFormMessage(form, message, type) {
+    // Remove any existing message
+    const existingMessage = form.querySelector('.form-message');
+    if (existingMessage) {
+        existingMessage.remove();
+    }
+    
+    // Create new message element
+    const messageDiv = document.createElement('div');
+    messageDiv.className = `form-message form-message-${type}`;
+    messageDiv.textContent = message;
+    
+    // Insert message before the submit button
+    const submitBtn = form.querySelector('.submit-btn');
+    form.insertBefore(messageDiv, submitBtn);
+    
+    // Auto-remove success messages after 5 seconds
+    if (type === 'success') {
+        setTimeout(() => {
+            if (messageDiv.parentNode) {
+                messageDiv.remove();
+            }
+        }, 5000);
+    }
+}
+
+// Helper function to get current page name
+function getCurrentPageName() {
+    const path = window.location.pathname;
+    const page = path.split('/').pop();
+    
+    switch (page) {
+        case 'index.html':
+        case '':
+            return 'Home';
+        case 'the-academy.html':
+            return 'The Academy';
+        case 'junior-grassroots.html':
+            return 'Junior Grassroots';
+        case 'about.html':
+            return 'About';
+        case 'recruitment.html':
+            return 'Recruitment';
+        case 'wanaka-tournament.html':
+            return 'Wanaka Tournament';
+        default:
+            return 'Website';
+    }
+}
+
+// Dynamic fixture updates
+function updateFixtures() {
+    const fixtures = {
+        lastMatch: {
+            home: 'Wānaka FC',
+            away: 'Nelson Suburbs',
+            homeScore: 3,
+            awayScore: 1,
+            date: '2025-09-13'
+        },
+        nextMatch: {
+            home: 'Wānaka FC',
+            away: 'Valley Rovers',
+            date: '2024-01-22',
+            time: '14:00',
+            location: 'Wanaka Sports Ground'
+        }
+    };
+    
+    const lastMatchCard = document.querySelector('.fixture-card:first-child');
+    const nextMatchCard = document.querySelector('.fixture-card:last-child');
+    
+    if (lastMatchCard) {
+        lastMatchCard.querySelector('.match-team').textContent = 
+            `${fixtures.lastMatch.home} vs ${fixtures.lastMatch.away}`;
+        lastMatchCard.querySelector('.match-result').textContent = 
+            `${fixtures.lastMatch.homeScore} - ${fixtures.lastMatch.awayScore}`;
+    }
+    
+    if (nextMatchCard) {
+        nextMatchCard.querySelector('.match-team').textContent = 
+            `${fixtures.nextMatch.home} vs ${fixtures.nextMatch.away}`;
+        nextMatchCard.querySelector('.match-info').innerHTML = 
+            `${fixtures.nextMatch.date} at ${fixtures.nextMatch.time}<br>${fixtures.nextMatch.location}`;
+    }
+}
+
+document.addEventListener('DOMContentLoaded', updateFixtures);
+
+// Landing Phase Transition functionality
+function initLandingTransition() {
+    const phase1 = document.querySelector('.phase-1');
+    const phase2 = document.querySelector('.phase-2');
+    
+    if (!phase1 || !phase2) return;
+    
+    // Start the transition after 5 seconds
+    setTimeout(() => {
+        phase1.classList.remove('active');
+        phase2.classList.add('active');
+        
+        // Trigger phase-2 text animations when the phase becomes active
+        // The CSS animations will now start because .phase-2.active selectors are triggered
+    }, 2500);
+}
+
+// Smooth scroll for mouse wheel - only apply on pages with .section elements
+let isScrolling = false;
+
+function initCustomScrollBehavior() {
+    const sections = document.querySelectorAll('.section');
+    
+    // Only apply custom scroll behavior if there are multiple .section elements AND 
+    // they include the main container (indicating this is the homepage with full-page sections)
+    const mainContainer = document.querySelector('.main-container');
+    
+    if (sections.length === 0 || !mainContainer || sections.length < 3) {
+        console.log('No full-page section layout detected, using default scroll behavior');
+        return;
+    }
+    
+    console.log(`Found ${sections.length} .section elements with main-container, applying custom scroll behavior`);
+    
+    window.addEventListener('wheel', (e) => {
+        if (isScrolling) return;
+        
+        // Prevent default scroll behavior only on pages with sections
+        e.preventDefault();
+        
+        isScrolling = true;
+        
+        const currentSection = Array.from(sections).findIndex(section => {
+            const rect = section.getBoundingClientRect();
+            return rect.top <= 100 && rect.bottom > 100;
+        });
+        
+        let nextSection = currentSection;
+        
+        if (e.deltaY > 0 && currentSection < sections.length - 1) {
+            nextSection = currentSection + 1;
+        } else if (e.deltaY < 0 && currentSection > 0) {
+            nextSection = currentSection - 1;
+        }
+        
+        if (nextSection >= 0 && nextSection < sections.length && sections[nextSection]) {
+            sections[nextSection].scrollIntoView({ behavior: 'smooth' });
+        }
+        
+        setTimeout(() => {
+            isScrolling = false;
+        }, 1000);
+    });
+
+    // Keyboard navigation - only for pages with sections
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+            e.preventDefault();
+            
+            const currentSection = Array.from(sections).findIndex(section => {
+                const rect = section.getBoundingClientRect();
+                return rect.top <= 100 && rect.bottom > 100;
+            });
+            
+            let nextSection = currentSection;
+            
+            if (e.key === 'ArrowDown' && currentSection < sections.length - 1) {
+                nextSection = currentSection + 1;
+            } else if (e.key === 'ArrowUp' && currentSection > 0) {
+                nextSection = currentSection - 1;
+            }
+            
+            if (nextSection >= 0 && nextSection < sections.length && sections[nextSection]) {
+                sections[nextSection].scrollIntoView({ behavior: 'smooth' });
+            }
+        }
+    });
+}
+
+// Tournament Images Fullscreen Functionality
+function initTournamentImageModal() {
+    // Only run on tournament page
+    if (!document.querySelector('.tournament-images-section')) return;
+    
+    const tournamentImages = document.querySelectorAll('.tournament-image img');
+    let imageModal = null;
+    
+    // Create modal HTML structure
+    function createModal() {
+        const modal = document.createElement('div');
+        modal.className = 'image-modal';
+        modal.innerHTML = `
+            <div class="modal-image-container">
+                <span class="close-image-modal">&times;</span>
+                <img class="modal-image" src="" alt="">
+            </div>
+        `;
+        document.body.appendChild(modal);
+        return modal;
+    }
+    
+    // Open modal with image
+    function openModal(imageSrc, imageAlt) {
+        if (!imageModal) {
+            imageModal = createModal();
+        }
+        
+        const modalImage = imageModal.querySelector('.modal-image');
+        modalImage.src = imageSrc;
+        modalImage.alt = imageAlt;
+        
+        imageModal.classList.add('show');
+        document.body.classList.add('modal-open');
+        
+        // Add event listeners for closing
+        const closeBtn = imageModal.querySelector('.close-image-modal');
+        closeBtn.addEventListener('click', closeModal);
+        
+        // Close on background click
+        imageModal.addEventListener('click', (e) => {
+            if (e.target === imageModal) {
+                closeModal();
+            }
+        });
+        
+        // Close on ESC key
+        document.addEventListener('keydown', handleEscKey);
+    }
+    
+    // Close modal
+    function closeModal() {
+        if (imageModal) {
+            imageModal.classList.remove('show');
+            document.body.classList.remove('modal-open');
+            
+            // Remove ESC key listener
+            document.removeEventListener('keydown', handleEscKey);
+            
+            // Clean up modal after animation
+            setTimeout(() => {
+                if (imageModal && imageModal.parentNode) {
+                    imageModal.parentNode.removeChild(imageModal);
+                    imageModal = null;
+                }
+            }, 300);
+        }
+    }
+    
+    // Handle ESC key press
+    function handleEscKey(e) {
+        if (e.key === 'Escape') {
+            closeModal();
+        }
+    }
+    
+    // Add click event listeners to tournament images
+    tournamentImages.forEach(img => {
+        img.parentElement.addEventListener('click', (e) => {
+            e.preventDefault();
+            openModal(img.src, img.alt);
+        });
+        
+        // Add keyboard accessibility
+        img.parentElement.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                openModal(img.src, img.alt);
+            }
+        });
+        
+        // Make focusable for keyboard navigation
+        img.parentElement.setAttribute('tabindex', '0');
+        img.parentElement.setAttribute('role', 'button');
+        img.parentElement.setAttribute('aria-label', 'View image in fullscreen');
+    });
+}
