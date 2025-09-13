@@ -385,27 +385,27 @@ function initRecruitmentPage() {
     const testimonialData = {
         1: {
             name: "Blaine Mabie",
-            position: "Midfielder - Senior Team",
-            testimonial: "Wanaka FC transformed my game and gave me opportunities I never thought possible. The coaching staff here are world-class, and the facilities are incredible. I've grown not just as a player, but as a person. The club's commitment to developing young talent is unmatched, and I'm proud to be part of this amazing family.",
-            videoSrc: "Blaine video.mp4"
+            position: "",
+            testimonial: "",
+            videoSrc: "Blaine-video.mp4"
         },
         2: {
             name: "Phoenix Coursey",
-            position: "Forward - Women's Team",
-            testimonial: "The coaching staff here are incredible. They helped me reach my full potential and supported me through every challenge. The women's program at Wanaka FC is truly special - we have equal opportunities, excellent facilities, and a supportive environment that allows us to excel both on and off the pitch.",
+            position: "",
+            testimonial: "",
             videoSrc: "Phoenix.mp4"
         },
         3: {
             name: "Louis Wickremesekera",
-            position: "Defender - Academy Graduate",
-            testimonial: "From academy to first team, Wanaka FC supported me every step of the way. The pathway from youth to senior level is clear and well-structured. The coaches believe in developing players holistically, focusing on technical skills, tactical understanding, and character development.",
-            videoSrc: "Prolerus-Test-Video.mp4"
+            position: "",
+            testimonial: "",
+            videoSrc: "Louis.mp4"
         },
         4: {
             name: "Edy Belingher",
-            position: "Goalkeeper - Youth Team",
-            testimonial: "The facilities and training programs are world-class. I've improved so much since joining Wanaka FC. The goalkeeper coaching is exceptional, and I feel prepared for every match. The club's investment in youth development shows their commitment to building a strong future.",
-            videoSrc: "Edy Video.mp4"
+            position: "",
+            testimonial: "",
+            videoSrc: "Edy-video.mp4"
         },
         5: {
             name: "David Park",
