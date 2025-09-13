@@ -3295,6 +3295,12 @@ body.modal-open {
     hyphens: auto;
 }
 
+/* Match padding on subheading paragraph in hero-content on the-academy.html to grassroots.html */
+.about-hero .hero-content p {
+    padding-left: 20px;
+    padding-right: 20px;
+}
+
 /* Ensure all academy page containers respect viewport width */
 .academy-section .section-container,
 .academy-structure-container {
