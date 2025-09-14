@@ -43,17 +43,35 @@ $possible_paths = [
     __DIR__ . '/PHPMailer/src/PHPMailer.php'
 ];
 
+$checked_paths = [];
 foreach ($possible_paths as $path) {
+    $checked_paths[] = $path . ' - ' . (file_exists($path) ? 'EXISTS' : 'NOT FOUND');
     if (file_exists($path)) {
-        require_once $path;
-        $phpmailer_loaded = true;
-        break;
+        try {
+            require_once $path;
+            $phpmailer_loaded = true;
+            error_log("PHPMailer loaded successfully from: $path");
+            break;
+        } catch (Exception $e) {
+            error_log("Failed to load PHPMailer from $path: " . $e->getMessage());
+        }
     }
 }
 
-// If PHPMailer is not available, try to use a simple SMTP implementation
+// Log all checked paths for debugging
+error_log("PHPMailer path check results: " . implode(', ', $checked_paths));
+
+// If PHPMailer is not available, provide detailed error information
 if (!$phpmailer_loaded || !class_exists('PHPMailer\PHPMailer\PHPMailer')) {
-    error_log("PHPMailer not found, attempting fallback SMTP implementation");
+    error_log("PHPMailer not found. Checked paths: " . implode(', ', $checked_paths));
+    
+    // Check if this is likely a missing dependencies issue
+    if (!file_exists(__DIR__ . '/vendor/autoload.php')) {
+        error_log("CRITICAL: vendor/autoload.php not found. Run 'composer install' to install dependencies.");
+        sendJsonResponse(false, 'Email service not configured. Please run setup script or contact administrator.', 500);
+    }
+    
+    error_log("Attempting fallback SMTP implementation");
     
     // Fallback: Create a simple SMTP class
     class SimpleSMTP {
