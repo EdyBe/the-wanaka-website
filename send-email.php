@@ -1,6 +1,6 @@
 <?php
 // SMTP2GO Email Handler for Wanaka FC Contact Forms
-// Uses environment variables for SMTP2GO credentials
+// Uses PHPMailer for reliable SMTP delivery
 
 // Start output buffering to prevent any premature output
 ob_start();
@@ -32,6 +32,138 @@ function sendJsonResponse($success, $message, $httpCode = 200) {
     // End output buffering and exit
     ob_end_flush();
     exit;
+}
+
+// Try to load PHPMailer - check multiple possible locations
+$phpmailer_loaded = false;
+$possible_paths = [
+    __DIR__ . '/vendor/autoload.php',
+    __DIR__ . '/../vendor/autoload.php',
+    __DIR__ . '/phpmailer/PHPMailerAutoload.php',
+    __DIR__ . '/PHPMailer/src/PHPMailer.php'
+];
+
+foreach ($possible_paths as $path) {
+    if (file_exists($path)) {
+        require_once $path;
+        $phpmailer_loaded = true;
+        break;
+    }
+}
+
+// If PHPMailer is not available, try to use a simple SMTP implementation
+if (!$phpmailer_loaded || !class_exists('PHPMailer\PHPMailer\PHPMailer')) {
+    error_log("PHPMailer not found, attempting fallback SMTP implementation");
+    
+    // Fallback: Create a simple SMTP class
+    class SimpleSMTP {
+        private $host;
+        private $port;
+        private $username;
+        private $password;
+        private $socket;
+        
+        public function __construct($host, $port, $username, $password) {
+            $this->host = $host;
+            $this->port = $port;
+            $this->username = $username;
+            $this->password = $password;
+        }
+        
+        public function send($to, $subject, $body, $from_email, $from_name, $reply_to = null) {
+            try {
+                // Create socket connection
+                $this->socket = fsockopen($this->host, $this->port, $errno, $errstr, 30);
+                if (!$this->socket) {
+                    throw new Exception("Could not connect to SMTP server: $errstr ($errno)");
+                }
+                
+                // Read server response
+                $this->getResponse();
+                
+                // Send EHLO
+                $this->sendCommand("EHLO " . $_SERVER['SERVER_NAME']);
+                
+                // Start TLS if available
+                $this->sendCommand("STARTTLS");
+                $this->getResponse();
+                
+                // Close and reopen connection with TLS
+                fclose($this->socket);
+                $context = stream_context_create([
+                    'ssl' => [
+                        'verify_peer' => false,
+                        'verify_peer_name' => false,
+                    ]
+                ]);
+                $this->socket = stream_socket_client("tls://{$this->host}:{$this->port}", $errno, $errstr, 30, STREAM_CLIENT_CONNECT, $context);
+                
+                if (!$this->socket) {
+                    throw new Exception("Could not establish TLS connection: $errstr ($errno)");
+                }
+                
+                // Read server response after TLS
+                $this->getResponse();
+                
+                // Send EHLO again
+                $this->sendCommand("EHLO " . $_SERVER['SERVER_NAME']);
+                
+                // Authenticate
+                $this->sendCommand("AUTH LOGIN");
+                $this->sendCommand(base64_encode($this->username));
+                $this->sendCommand(base64_encode($this->password));
+                
+                // Send email
+                $this->sendCommand("MAIL FROM: <$from_email>");
+                $this->sendCommand("RCPT TO: <$to>");
+                $this->sendCommand("DATA");
+                
+                // Email headers and body
+                $email_data = "From: $from_name <$from_email>\r\n";
+                $email_data .= "To: <$to>\r\n";
+                if ($reply_to) {
+                    $email_data .= "Reply-To: <$reply_to>\r\n";
+                }
+                $email_data .= "Subject: $subject\r\n";
+                $email_data .= "MIME-Version: 1.0\r\n";
+                $email_data .= "Content-Type: text/html; charset=UTF-8\r\n";
+                $email_data .= "\r\n";
+                $email_data .= $body;
+                $email_data .= "\r\n.\r\n";
+                
+                fwrite($this->socket, $email_data);
+                $this->getResponse();
+                
+                // Quit
+                $this->sendCommand("QUIT");
+                fclose($this->socket);
+                
+                return true;
+                
+            } catch (Exception $e) {
+                if ($this->socket) {
+                    fclose($this->socket);
+                }
+                throw $e;
+            }
+        }
+        
+        private function sendCommand($command) {
+            fwrite($this->socket, $command . "\r\n");
+            return $this->getResponse();
+        }
+        
+        private function getResponse() {
+            $response = '';
+            while ($line = fgets($this->socket, 515)) {
+                $response .= $line;
+                if (substr($line, 3, 1) == ' ') {
+                    break;
+                }
+            }
+            return $response;
+        }
+    }
 }
 
 // SMTP2GO Configuration from Environment Variables
@@ -103,11 +235,6 @@ if (strlen($message) < 10 || strlen($message) > 1000) {
     sendJsonResponse(false, 'Message must be between 10 and 1000 characters', 400);
 }
 
-// IMPORTANT: Use system email as "From" address for better deliverability
-// User's email will be in Reply-To header
-$from_email = $system_from_email;
-
-
 // Create email content
 $subject = "New Contact Form Submission from Wanaka FC Website - $page";
 $email_body = "
@@ -161,30 +288,55 @@ $email_body = "
 </html>
 ";
 
-// Email headers - Using system email as From address for better deliverability
-$headers = array(
-    'MIME-Version: 1.0',
-    'Content-type: text/html; charset=UTF-8',
-    "From: $from_name <$from_email>",      // System email as sender
-    "Reply-To: $name <$user_email>",       // User email for replies
-    "Return-Path: $system_from_email",     // System email for bounces
-    'X-Mailer: PHP/' . phpversion()
-);
-
-// Try to send email using SMTP2GO
+// Try to send email
 try {
     // Log the attempt
     error_log("Attempting to send email from contact form - Name: $name, Email: $user_email, Page: $page");
     
-    // Use PHP's built-in mail function with SMTP configuration
-    // Note: For production, consider using PHPMailer or SwiftMailer for better SMTP support
+    $mail_sent = false;
     
-    // Configure SMTP settings in php.ini or use ini_set (basic approach)
-    ini_set('SMTP', $smtp_host);
-    ini_set('smtp_port', $smtp_port);
-    
-    // Send the email
-    $mail_sent = mail($to_email, $subject, $email_body, implode("\r\n", $headers));
+    // Try PHPMailer first if available
+    if ($phpmailer_loaded && class_exists('PHPMailer\PHPMailer\PHPMailer')) {
+        use PHPMailer\PHPMailer\PHPMailer;
+        use PHPMailer\PHPMailer\SMTP;
+        use PHPMailer\PHPMailer\Exception;
+        
+        $mail = new PHPMailer(true);
+        
+        try {
+            // Server settings
+            $mail->isSMTP();
+            $mail->Host       = $smtp_host;
+            $mail->SMTPAuth   = true;
+            $mail->Username   = $smtp_username;
+            $mail->Password   = $smtp_password;
+            $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
+            $mail->Port       = $smtp_port;
+            
+            // Recipients
+            $mail->setFrom($system_from_email, $from_name);
+            $mail->addAddress($to_email);
+            $mail->addReplyTo($user_email, $name);
+            
+            // Content
+            $mail->isHTML(true);
+            $mail->Subject = $subject;
+            $mail->Body    = $email_body;
+            
+            $mail->send();
+            $mail_sent = true;
+            
+        } catch (Exception $e) {
+            error_log("PHPMailer Error: " . $mail->ErrorInfo);
+            throw new Exception("PHPMailer failed: " . $mail->ErrorInfo);
+        }
+        
+    } else {
+        // Use fallback SMTP implementation
+        $smtp = new SimpleSMTP($smtp_host, $smtp_port, $smtp_username, $smtp_password);
+        $smtp->send($to_email, $subject, $email_body, $system_from_email, $from_name, $user_email);
+        $mail_sent = true;
+    }
     
     if ($mail_sent) {
         // Log successful submission
@@ -196,7 +348,7 @@ try {
         
         sendJsonResponse(true, 'Thank you for your message! We\'ll get back to you soon.');
     } else {
-        throw new Exception('Mail function returned false - check server mail configuration');
+        throw new Exception('Email sending failed - unknown error');
     }
     
 } catch (Exception $e) {
