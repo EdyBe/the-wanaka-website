@@ -1,0 +1,29 @@
+# Replit Configuration for Wanaka FC Website
+
+[deployment]
+run = ["sh", "setup.sh", "&&", "php", "-S", "0.0.0.0:8080"]
+
+[nix]
+channel = "stable-22_11"
+
+[env]
+PHP_LD_LIBRARY_PATH = "/nix/store/kmxb3ibhajxf4n6a2akfhc4h4djjw2za-glibc-2.35-163/lib"
+
+[[ports]]
+localPort = 8080
+externalPort = 80
+
+[languages]
+
+[languages.php]
+pattern = "**/*.php"
+
+[languages.php.languageServer]
+start = "intelephense --stdio"
+
+[gitHubImport]
+requiredFiles = [".replit", "replit.nix"]
+
+[deployment]
+build = ["sh", "setup.sh"]
+run = ["php", "-S", "0.0.0.0:8080"]
