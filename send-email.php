@@ -2,6 +2,38 @@
 // SMTP2GO Email Handler for Wanaka FC Contact Forms
 // Uses environment variables for SMTP2GO credentials
 
+// Start output buffering to prevent any premature output
+ob_start();
+
+// Error reporting - log errors but don't display them
+error_reporting(E_ALL);
+ini_set('display_errors', 0);
+ini_set('log_errors', 1);
+
+// Function to send JSON response and exit
+function sendJsonResponse($success, $message, $httpCode = 200) {
+    // Clear any previous output
+    ob_clean();
+    
+    // Set headers
+    http_response_code($httpCode);
+    header('Content-Type: application/json');
+    header('Access-Control-Allow-Origin: *');
+    header('Access-Control-Allow-Methods: POST');
+    header('Access-Control-Allow-Headers: Content-Type');
+    
+    // Send response
+    echo json_encode([
+        'success' => $success,
+        'message' => $message,
+        'timestamp' => date('Y-m-d H:i:s')
+    ]);
+    
+    // End output buffering and exit
+    ob_end_flush();
+    exit;
+}
+
 // SMTP2GO Configuration from Environment Variables
 $smtp_host = getenv('SMTP2GO_HOST') ?: $_ENV['SMTP2GO_HOST'] ?? 'mail.smtp2go.com';
 $smtp_port = getenv('SMTP2GO_PORT') ?: $_ENV['SMTP2GO_PORT'] ?? '587';
@@ -29,38 +61,26 @@ foreach ($required_env_vars as $var_name => $var_value) {
 
 if (!empty($missing_vars)) {
     error_log("SMTP2GO Configuration Error: Missing environment variables: " . implode(', ', $missing_vars));
-    http_response_code(500);
-    header('Content-Type: application/json');
-    echo json_encode([
-        'success' => false, 
-        'message' => 'Email service configuration error. Please contact the administrator.'
-    ]);
-    exit;
+    sendJsonResponse(false, 'Email service configuration error. Please contact the administrator.', 500);
 }
-
-// Set content type to JSON
-header('Content-Type: application/json');
-
-// Enable CORS for local development (remove in production if not needed)
-header('Access-Control-Allow-Origin: *');
-header('Access-Control-Allow-Methods: POST');
-header('Access-Control-Allow-Headers: Content-Type');
 
 // Only allow POST requests
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-    http_response_code(405);
-    echo json_encode(['success' => false, 'message' => 'Method not allowed']);
-    exit;
+    sendJsonResponse(false, 'Method not allowed', 405);
 }
 
 // Get POST data
 $input = json_decode(file_get_contents('php://input'), true);
 
+// Check if JSON decoding failed
+if (json_last_error() !== JSON_ERROR_NONE) {
+    error_log("JSON decode error: " . json_last_error_msg());
+    sendJsonResponse(false, 'Invalid JSON data received', 400);
+}
+
 // Validate required fields
 if (!isset($input['name']) || !isset($input['email']) || !isset($input['message'])) {
-    http_response_code(400);
-    echo json_encode(['success' => false, 'message' => 'Missing required fields']);
-    exit;
+    sendJsonResponse(false, 'Missing required fields', 400);
 }
 
 // Sanitize input data
@@ -69,30 +89,23 @@ $user_email = filter_var(trim($input['email']), FILTER_VALIDATE_EMAIL);
 $message = htmlspecialchars(trim($input['message']));
 $page = isset($input['page']) ? htmlspecialchars(trim($input['page'])) : 'Website';
 
-// IMPORTANT: Use user's email as the "From" address
-// Note: Many SMTP providers require the "From" address to be from a verified domain
-// If SMTP2GO rejects user emails, we'll fall back to system email with Reply-To
-$from_email = $user_email;
-
 // Validate email format
 if (!$user_email) {
-    http_response_code(400);
-    echo json_encode(['success' => false, 'message' => 'Invalid email format']);
-    exit;
+    sendJsonResponse(false, 'Invalid email format', 400);
 }
 
 // Validate input lengths
 if (strlen($name) < 2 || strlen($name) > 100) {
-    http_response_code(400);
-    echo json_encode(['success' => false, 'message' => 'Name must be between 2 and 100 characters']);
-    exit;
+    sendJsonResponse(false, 'Name must be between 2 and 100 characters', 400);
 }
 
 if (strlen($message) < 10 || strlen($message) > 1000) {
-    http_response_code(400);
-    echo json_encode(['success' => false, 'message' => 'Message must be between 10 and 1000 characters']);
-    exit;
+    sendJsonResponse(false, 'Message must be between 10 and 1000 characters', 400);
 }
+
+// IMPORTANT: Use system email as "From" address for better deliverability
+// User's email will be in Reply-To header
+$from_email = $system_from_email;
 
 
 // Create email content
@@ -148,31 +161,21 @@ $email_body = "
 </html>
 ";
 
-// Email headers - Using user's email as From address
+// Email headers - Using system email as From address for better deliverability
 $headers = array(
     'MIME-Version: 1.0',
     'Content-type: text/html; charset=UTF-8',
-    "From: $name <$from_email>",           // User's name and email as sender
-    "Reply-To: $name <$user_email>",       // Same as From for direct replies
+    "From: $from_name <$from_email>",      // System email as sender
+    "Reply-To: $name <$user_email>",       // User email for replies
     "Return-Path: $system_from_email",     // System email for bounces
     'X-Mailer: PHP/' . phpversion()
 );
 
-// Alternative approach if SMTP provider rejects user emails:
-// Uncomment the lines below and comment out the headers above
-/*
-$headers_fallback = array(
-    'MIME-Version: 1.0',
-    'Content-type: text/html; charset=UTF-8',
-    "From: $from_name <$system_from_email>",    // System email as sender
-    "Reply-To: $name <$user_email>",            // User email for replies
-    "Return-Path: $system_from_email",
-    'X-Mailer: PHP/' . phpversion()
-);
-*/
-
 // Try to send email using SMTP2GO
 try {
+    // Log the attempt
+    error_log("Attempting to send email from contact form - Name: $name, Email: $user_email, Page: $page");
+    
     // Use PHP's built-in mail function with SMTP configuration
     // Note: For production, consider using PHPMailer or SwiftMailer for better SMTP support
     
@@ -184,32 +187,26 @@ try {
     $mail_sent = mail($to_email, $subject, $email_body, implode("\r\n", $headers));
     
     if ($mail_sent) {
-        // Log successful submission (optional)
+        // Log successful submission
         error_log("Contact form submission from $user_email ($name) sent successfully");
         
-        echo json_encode([
-            'success' => true, 
-            'message' => 'Thank you for your message! We\'ll get back to you soon.'
-        ]);
+        // Optional: Save to database or file for backup
+        $log_entry = date('Y-m-d H:i:s') . " | SUCCESS | $name | $user_email | " . str_replace(["\r", "\n"], [' ', ' '], $message) . "\n";
+        file_put_contents('contact_submissions.log', $log_entry, FILE_APPEND | LOCK_EX);
+        
+        sendJsonResponse(true, 'Thank you for your message! We\'ll get back to you soon.');
     } else {
-        throw new Exception('Mail function failed');
+        throw new Exception('Mail function returned false - check server mail configuration');
     }
     
 } catch (Exception $e) {
-    // Log error
-    error_log("Contact form email failed: " . $e->getMessage());
+    // Log error with more details
+    error_log("Contact form email failed: " . $e->getMessage() . " | Name: $name | Email: $user_email");
     
-    http_response_code(500);
-    echo json_encode([
-        'success' => false, 
-        'message' => 'Sorry, there was an error sending your message. Please try again later or contact us directly.'
-    ]);
+    // Optional: Save failed attempt to log
+    $log_entry = date('Y-m-d H:i:s') . " | ERROR | $name | $user_email | " . $e->getMessage() . "\n";
+    file_put_contents('contact_submissions.log', $log_entry, FILE_APPEND | LOCK_EX);
+    
+    sendJsonResponse(false, 'Sorry, there was an error sending your message. Please try again later or contact us directly at info@wanakafootball.nz', 500);
 }
-
-// Optional: Save to database or file for backup
-// You can uncomment and modify this section if you want to store submissions
-/*
-$log_entry = date('Y-m-d H:i:s') . " | $name | $email | " . str_replace(["\r", "\n"], [' ', ' '], $message) . "\n";
-file_put_contents('contact_submissions.log', $log_entry, FILE_APPEND | LOCK_EX);
-*/
 ?>
