@@ -3,7 +3,8 @@
     "description": "Wanaka FC Football Club Website",
     "type": "project",
     "require": {
-        "php": "^8.0"
+        "php": "^8.0",
+        "phpmailer/phpmailer": "^6.8"
     },
     "scripts": {
         "start": "php -S 0.0.0.0:$PORT"
