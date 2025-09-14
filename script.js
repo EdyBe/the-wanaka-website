@@ -772,6 +772,7 @@ function updateFixtures() {
         const matchTeamElement = nextMatchCard.querySelector('.match-team');
         const matchInfoElement = nextMatchCard.querySelector('.match-info');
         
+        // Only update if the elements exist (they might be commented out in HTML)
         if (matchTeamElement) {
             matchTeamElement.textContent = `${fixtures.nextMatch.home} vs ${fixtures.nextMatch.away}`;
         }
