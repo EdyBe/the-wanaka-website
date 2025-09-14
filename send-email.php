@@ -95,6 +95,8 @@ if (!$phpmailer_loaded || !class_exists('PHPMailer\PHPMailer\PHPMailer')) {
         public function send($to, $subject, $body, $from_email, $from_name, $reply_to = null) {
             try {
                 // Create socket connection
+                $errno = 0;
+                $errstr = '';
                 $this->socket = fsockopen($this->host, $this->port, $errno, $errstr, 30);
                 if (!$this->socket) {
                     throw new Exception("Could not connect to SMTP server: $errstr ($errno)");
