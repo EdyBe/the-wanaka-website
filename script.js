@@ -769,10 +769,15 @@ function updateFixtures() {
     }
     
     if (nextMatchCard) {
-        nextMatchCard.querySelector('.match-team').textContent = 
-            `${fixtures.nextMatch.home} vs ${fixtures.nextMatch.away}`;
-        nextMatchCard.querySelector('.match-info').innerHTML = 
-            `${fixtures.nextMatch.date} at ${fixtures.nextMatch.time}<br>${fixtures.nextMatch.location}`;
+        const matchTeamElement = nextMatchCard.querySelector('.match-team');
+        const matchInfoElement = nextMatchCard.querySelector('.match-info');
+        
+        if (matchTeamElement) {
+            matchTeamElement.textContent = `${fixtures.nextMatch.home} vs ${fixtures.nextMatch.away}`;
+        }
+        if (matchInfoElement) {
+            matchInfoElement.innerHTML = `${fixtures.nextMatch.date} at ${fixtures.nextMatch.time}<br>${fixtures.nextMatch.location}`;
+        }
     }
 }
 

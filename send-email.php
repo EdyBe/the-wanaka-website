@@ -22,7 +22,7 @@ function sendJsonResponse($success, $message, $httpCode = 200) {
     // Set headers
     http_response_code($httpCode);
     header('Content-Type: application/json');
-    header('Access-Control-Allow-Origin: *');
+    header('Access-Control-Allow-Origin: https://' . $_SERVER['HTTP_HOST']);
     header('Access-Control-Allow-Methods: POST');
     header('Access-Control-Allow-Headers: Content-Type');
     
@@ -55,119 +55,10 @@ foreach ($possible_paths as $path) {
     }
 }
 
-// If PHPMailer is not available, try to use a simple SMTP implementation
+// Ensure PHPMailer is available - required for security
 if (!$phpmailer_loaded || !class_exists('PHPMailer\PHPMailer\PHPMailer')) {
-    error_log("PHPMailer not found, attempting fallback SMTP implementation");
-    
-    // Fallback: Create a simple SMTP class
-    class SimpleSMTP {
-        private $host;
-        private $port;
-        private $username;
-        private $password;
-        private $socket;
-        
-        public function __construct($host, $port, $username, $password) {
-            $this->host = $host;
-            $this->port = $port;
-            $this->username = $username;
-            $this->password = $password;
-        }
-        
-        public function send($to, $subject, $body, $from_email, $from_name, $reply_to = null) {
-            try {
-                // Create socket connection
-                $this->socket = fsockopen($this->host, $this->port, $errno, $errstr, 30);
-                if (!$this->socket) {
-                    throw new Exception("Could not connect to SMTP server: $errstr ($errno)");
-                }
-                
-                // Read server response
-                $this->getResponse();
-                
-                // Send EHLO
-                $this->sendCommand("EHLO " . $_SERVER['SERVER_NAME']);
-                
-                // Start TLS if available
-                $this->sendCommand("STARTTLS");
-                $this->getResponse();
-                
-                // Close and reopen connection with TLS
-                fclose($this->socket);
-                $context = stream_context_create([
-                    'ssl' => [
-                        'verify_peer' => false,
-                        'verify_peer_name' => false,
-                    ]
-                ]);
-                $this->socket = stream_socket_client("tls://{$this->host}:{$this->port}", $errno, $errstr, 30, STREAM_CLIENT_CONNECT, $context);
-                
-                if (!$this->socket) {
-                    throw new Exception("Could not establish TLS connection: $errstr ($errno)");
-                }
-                
-                // Read server response after TLS
-                $this->getResponse();
-                
-                // Send EHLO again
-                $this->sendCommand("EHLO " . $_SERVER['SERVER_NAME']);
-                
-                // Authenticate
-                $this->sendCommand("AUTH LOGIN");
-                $this->sendCommand(base64_encode($this->username));
-                $this->sendCommand(base64_encode($this->password));
-                
-                // Send email
-                $this->sendCommand("MAIL FROM: <$from_email>");
-                $this->sendCommand("RCPT TO: <$to>");
-                $this->sendCommand("DATA");
-                
-                // Email headers and body
-                $email_data = "From: $from_name <$from_email>\r\n";
-                $email_data .= "To: <$to>\r\n";
-                if ($reply_to) {
-                    $email_data .= "Reply-To: <$reply_to>\r\n";
-                }
-                $email_data .= "Subject: $subject\r\n";
-                $email_data .= "MIME-Version: 1.0\r\n";
-                $email_data .= "Content-Type: text/html; charset=UTF-8\r\n";
-                $email_data .= "\r\n";
-                $email_data .= $body;
-                $email_data .= "\r\n.\r\n";
-                
-                fwrite($this->socket, $email_data);
-                $this->getResponse();
-                
-                // Quit
-                $this->sendCommand("QUIT");
-                fclose($this->socket);
-                
-                return true;
-                
-            } catch (Exception $e) {
-                if ($this->socket) {
-                    fclose($this->socket);
-                }
-                throw $e;
-            }
-        }
-        
-        private function sendCommand($command) {
-            fwrite($this->socket, $command . "\r\n");
-            return $this->getResponse();
-        }
-        
-        private function getResponse() {
-            $response = '';
-            while ($line = fgets($this->socket, 515)) {
-                $response .= $line;
-                if (substr($line, 3, 1) == ' ') {
-                    break;
-                }
-            }
-            return $response;
-        }
-    }
+    error_log("PHPMailer not found - this is required for secure email handling");
+    sendJsonResponse(false, 'Email service not properly configured. Please contact the administrator.', 500);
 }
 
 // SMTP2GO Configuration from Environment Variables
@@ -294,8 +185,8 @@ $email_body = "
 
 // Try to send email
 try {
-    // Log the attempt
-    error_log("Attempting to send email from contact form - Name: $name, Email: $user_email, Page: $page");
+    // Log the attempt without PII
+    error_log("Contact form send attempt: page=" . $page);
     
     $mail_sent = false;
     
@@ -332,19 +223,12 @@ try {
         }
         
     } else {
-        // Use fallback SMTP implementation
-        $smtp = new SimpleSMTP($smtp_host, $smtp_port, $smtp_username, $smtp_password);
-        $smtp->send($to_email, $subject, $email_body, $system_from_email, $from_name, $user_email);
-        $mail_sent = true;
+        throw new Exception('PHPMailer is required but not available');
     }
     
     if ($mail_sent) {
-        // Log successful submission
-        error_log("Contact form submission from $user_email ($name) sent successfully");
-        
-        // Optional: Save to database or file for backup
-        $log_entry = date('Y-m-d H:i:s') . " | SUCCESS | $name | $user_email | " . str_replace(["\r", "\n"], [' ', ' '], $message) . "\n";
-        file_put_contents('contact_submissions.log', $log_entry, FILE_APPEND | LOCK_EX);
+        // Log successful submission without PII
+        error_log("Contact form submission sent successfully - no PII logged for security");
         
         sendJsonResponse(true, 'Thank you for your message! We\'ll get back to you soon.');
     } else {
@@ -352,12 +236,8 @@ try {
     }
     
 } catch (Exception $e) {
-    // Log error with more details
-    error_log("Contact form email failed: " . $e->getMessage() . " | Name: $name | Email: $user_email");
-    
-    // Optional: Save failed attempt to log
-    $log_entry = date('Y-m-d H:i:s') . " | ERROR | $name | $user_email | " . $e->getMessage() . "\n";
-    file_put_contents('contact_submissions.log', $log_entry, FILE_APPEND | LOCK_EX);
+    // Log error without PII for security
+    error_log("Contact form email failed: " . $e->getMessage() . " - no PII logged for security");
     
     sendJsonResponse(false, 'Sorry, there was an error sending your message. Please try again later or contact us directly at info@wanakafootball.nz', 500);
 }
