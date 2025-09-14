@@ -635,18 +635,50 @@ function initContactForm() {
                     body: JSON.stringify(submissionData)
                 });
                 
+                // Check if response is ok
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                // Check if response is JSON
+                const contentType = response.headers.get('content-type');
+                if (!contentType || !contentType.includes('application/json')) {
+                    // Log the actual response for debugging
+                    const responseText = await response.text();
+                    console.error('Non-JSON response received:', responseText);
+                    throw new Error('Server returned non-JSON response. Please check server configuration.');
+                }
+                
                 const result = await response.json();
+                
+                // Validate JSON structure
+                if (typeof result !== 'object' || result === null) {
+                    throw new Error('Invalid response format from server');
+                }
                 
                 if (result.success) {
                     showFormMessage(form, result.message, 'success');
                     form.reset();
                 } else {
-                    showFormMessage(form, result.message, 'error');
+                    showFormMessage(form, result.message || 'Unknown error occurred', 'error');
                 }
                 
             } catch (error) {
                 console.error('Form submission error:', error);
-                showFormMessage(form, 'Sorry, there was an error sending your message. Please try again later or contact us directly at info@wanakafootball.nz', 'error');
+                
+                // Provide more specific error messages based on error type
+                let errorMessage = 'Sorry, there was an error sending your message. Please try again later or contact us directly at info@wanakafootball.nz';
+                
+                if (error.name === 'SyntaxError' && error.message.includes('JSON')) {
+                    errorMessage = 'Server configuration error. Please contact us directly at info@wanakafootball.nz';
+                    console.error('JSON parsing failed - server likely returned HTML error page');
+                } else if (error.message.includes('HTTP error')) {
+                    errorMessage = 'Server error occurred. Please try again or contact us directly at info@wanakafootball.nz';
+                } else if (error.message.includes('Failed to fetch')) {
+                    errorMessage = 'Network error. Please check your connection and try again.';
+                }
+                
+                showFormMessage(form, errorMessage, 'error');
             } finally {
                 // Reset button state
                 submitBtn.textContent = originalText;
