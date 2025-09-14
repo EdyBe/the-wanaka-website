@@ -7,6 +7,6 @@
         "phpmailer/phpmailer": "^6.8"
     },
     "scripts": {
-        "start": "php -S 0.0.0.0:$PORT"
+        "start": "bash -lc 'php -S 0.0.0.0:${PORT:-5000}'"
     }
 }
