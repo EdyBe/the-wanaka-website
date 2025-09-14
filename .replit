@@ -35,4 +35,4 @@ externalPort = 80
 
 [deployment]
 deploymentTarget = "autoscale"
-run = ["php", "-S", "0.0.0.0:$PORT"]
+run = ["bash", "-lc", "php -S 0.0.0.0:${PORT}"]
