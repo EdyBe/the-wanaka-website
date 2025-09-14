@@ -563,6 +563,11 @@ body {
     z-index: 1;
     top: 50%;
     transform: translateY(-50%);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 0.8rem;
 }
 
 /* Show only 3 sponsors at a time - center focal + left and right side sponsors */
@@ -608,7 +613,7 @@ body {
     height: 90px;
     background: var(--primary-gold);
     border-radius: 50%;
-    margin: 0 auto 0.8rem;
+    margin: 0;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -617,6 +622,7 @@ body {
     font-weight: bold;
     transition: all 1s ease;
     overflow: hidden;
+    flex-shrink: 0;
 }
 
 .sponsor-logo img {
@@ -631,19 +637,23 @@ body {
     height: 110px;
     font-size: 2.4rem;
     transform: scale(1.1);
+    margin: 0;
 }
 
 .sponsor-slide h3 {
     font-size: 1.2rem;
-    margin-bottom: 0.6rem;
+    margin: 0;
     color: var(--primary-white);
     font-weight: 600;
     transition: all 1s ease;
+    text-align: center;
+    flex-shrink: 0;
 }
 
 .sponsor-slide.focal h3 {
     font-size: 1.5rem;
     color: var(--primary-gold);
+    margin: 0;
 }
 
 .sponsor-slide p {
