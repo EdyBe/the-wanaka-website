@@ -2,6 +2,10 @@
 // SMTP2GO Email Handler for Wanaka FC Contact Forms
 // Uses PHPMailer for reliable SMTP delivery
 
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\SMTP;
+use PHPMailer\PHPMailer\Exception;
+
 // Start output buffering to prevent any premature output
 ob_start();
 
@@ -297,10 +301,6 @@ try {
     
     // Try PHPMailer first if available
     if ($phpmailer_loaded && class_exists('PHPMailer\PHPMailer\PHPMailer')) {
-        use PHPMailer\PHPMailer\PHPMailer;
-        use PHPMailer\PHPMailer\SMTP;
-        use PHPMailer\PHPMailer\Exception;
-        
         $mail = new PHPMailer(true);
         
         try {
