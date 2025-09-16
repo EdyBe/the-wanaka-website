@@ -1,53 +1,53 @@
 // Loading Screen Animation - Working version with 2 second display
-console.log('Script starting...');
+console.log("Script starting...");
 
 // Initialize hamburger menu immediately on DOM load (fix for index.html)
-document.addEventListener('DOMContentLoaded', () => {
-    console.log('DOM Content Loaded');
-    
+document.addEventListener("DOMContentLoaded", () => {
+    console.log("DOM Content Loaded");
+
     // Initialize hamburger menu immediately for all pages
     initHamburgerMenu();
-    
-    const loadingScreen = document.getElementById('loading-screen');
-    console.log('Loading screen element:', loadingScreen);
-    
+
+    const loadingScreen = document.getElementById("loading-screen");
+    console.log("Loading screen element:", loadingScreen);
+
     if (loadingScreen) {
-        console.log('Starting 2 second timer...');
+        console.log("Starting 2 second timer...");
         // Show badge for exactly 2 seconds
         setTimeout(() => {
-            console.log('2 seconds passed, adding hide class...');
+            console.log("2 seconds passed, adding hide class...");
             // Add the hide class to trigger CSS transition
-            loadingScreen.classList.add('hide');
-            
+            loadingScreen.classList.add("hide");
+
             // After zoom completes, hide loading screen completely
             setTimeout(() => {
-                console.log('Transition complete, hiding loading screen...');
-                loadingScreen.style.display = 'none';
+                console.log("Transition complete, hiding loading screen...");
+                loadingScreen.style.display = "none";
                 initPageAnimations();
             }, 1500); // Wait for CSS transition to complete
         }, 2000); // Show logo for 2 seconds
     } else {
-        console.error('Loading screen element not found!');
+        console.error("Loading screen element not found!");
         // Fallback if loading screen not found
         initPageAnimations();
     }
 });
 
 // Backup event listener for window load
-window.addEventListener('load', () => {
-    console.log('Window loaded');
-    const loadingScreen = document.getElementById('loading-screen');
-    
+window.addEventListener("load", () => {
+    console.log("Window loaded");
+    const loadingScreen = document.getElementById("loading-screen");
+
     // Only run if the loading screen is still visible (DOMContentLoaded didn't work)
-    if (loadingScreen && !loadingScreen.classList.contains('hide')) {
-        console.log('Backup timer starting...');
+    if (loadingScreen && !loadingScreen.classList.contains("hide")) {
+        console.log("Backup timer starting...");
         setTimeout(() => {
-            console.log('Backup: adding hide class...');
-            loadingScreen.classList.add('hide');
-            
+            console.log("Backup: adding hide class...");
+            loadingScreen.classList.add("hide");
+
             setTimeout(() => {
-                console.log('Backup: hiding loading screen...');
-                loadingScreen.style.display = 'none';
+                console.log("Backup: hiding loading screen...");
+                loadingScreen.style.display = "none";
                 initPageAnimations();
             }, 1500);
         }, 2000);
@@ -56,60 +56,62 @@ window.addEventListener('load', () => {
 
 // Separate hamburger menu initialization function
 function initHamburgerMenu() {
-    console.log('Initializing hamburger menu...');
-    
+    console.log("Initializing hamburger menu...");
+
     // Mobile menu toggle
-    const hamburger = document.querySelector('.hamburger');
-    const navMenu = document.querySelector('.nav-menu');
+    const hamburger = document.querySelector(".hamburger");
+    const navMenu = document.querySelector(".nav-menu");
 
     if (hamburger && navMenu) {
-        console.log('Hamburger menu elements found, setting up event listeners...');
-        
+        console.log(
+            "Hamburger menu elements found, setting up event listeners...",
+        );
+
         // Remove any existing event listeners to prevent duplicates
-        hamburger.removeEventListener('click', handleHamburgerClick);
-        
+        hamburger.removeEventListener("click", handleHamburgerClick);
+
         // Add click event listener
-        hamburger.addEventListener('click', handleHamburgerClick);
+        hamburger.addEventListener("click", handleHamburgerClick);
 
         // Close mobile menu when clicking a link
-        document.querySelectorAll('.nav-link').forEach(link => {
-            link.addEventListener('click', () => {
-                hamburger.classList.remove('active');
-                navMenu.classList.remove('active');
+        document.querySelectorAll(".nav-link").forEach((link) => {
+            link.addEventListener("click", () => {
+                hamburger.classList.remove("active");
+                navMenu.classList.remove("active");
             });
         });
     } else {
-        console.log('Hamburger menu elements not found');
+        console.log("Hamburger menu elements not found");
     }
 }
 
 // Hamburger click handler function
 function handleHamburgerClick(e) {
     e.preventDefault();
-    const hamburger = document.querySelector('.hamburger');
-    const navMenu = document.querySelector('.nav-menu');
-    
+    const hamburger = document.querySelector(".hamburger");
+    const navMenu = document.querySelector(".nav-menu");
+
     if (hamburger && navMenu) {
-        hamburger.classList.toggle('active');
-        navMenu.classList.toggle('active');
-        console.log('Hamburger menu toggled');
+        hamburger.classList.toggle("active");
+        navMenu.classList.toggle("active");
+        console.log("Hamburger menu toggled");
     }
 }
 
 // Initialize page animations
 function initPageAnimations() {
     // Smooth scroll behavior for internal links only
-    document.querySelectorAll('.nav-link').forEach(link => {
-        link.addEventListener('click', (e) => {
-            const href = link.getAttribute('href');
-            
+    document.querySelectorAll(".nav-link").forEach((link) => {
+        link.addEventListener("click", (e) => {
+            const href = link.getAttribute("href");
+
             // Only prevent default and use smooth scroll for internal anchor links (starting with #)
-            if (href.startsWith('#')) {
+            if (href.startsWith("#")) {
                 e.preventDefault();
                 const targetSection = document.querySelector(href);
-                
+
                 if (targetSection) {
-                    targetSection.scrollIntoView({ behavior: 'smooth' });
+                    targetSection.scrollIntoView({ behavior: "smooth" });
                 }
             }
             // For external links (like about.html, recruitment.html), allow normal navigation
@@ -128,16 +130,16 @@ function initPageAnimations() {
 
     // Initialize landing phase transition
     initLandingTransition();
-    
+
     // Initialize triangle sponsor carousel
     initTriangleCarousel();
-    
+
     // Initialize recruitment page functionality
     initRecruitmentPage();
-    
+
     // Initialize custom scroll behavior (only for pages with .section elements)
     initCustomScrollBehavior();
-    
+
     // Initialize tournament image modal functionality
     initTournamentImageModal();
 
@@ -148,15 +150,17 @@ function initPageAnimations() {
 // Initialize academy image modal functionality
 function initAcademyImageModal() {
     // Only run on academy page
-    if (!document.querySelector('.academy-structure-section')) return;
+    if (!document.querySelector(".academy-structure-section")) return;
 
-    const academyImageContainer = document.querySelector('.academy-structure-image');
+    const academyImageContainer = document.querySelector(
+        ".academy-structure-image",
+    );
     let imageModal = null;
 
     // Create modal HTML structure
     function createModal() {
-        const modal = document.createElement('div');
-        modal.className = 'image-modal';
+        const modal = document.createElement("div");
+        modal.className = "image-modal";
         modal.innerHTML = `
             <div class="modal-image-container">
                 <span class="close-image-modal">&times;</span>
@@ -173,36 +177,36 @@ function initAcademyImageModal() {
             imageModal = createModal();
         }
 
-        const modalImage = imageModal.querySelector('.modal-image');
+        const modalImage = imageModal.querySelector(".modal-image");
         modalImage.src = imageSrc;
         modalImage.alt = imageAlt;
 
-        imageModal.classList.add('show');
-        document.body.classList.add('modal-open');
+        imageModal.classList.add("show");
+        document.body.classList.add("modal-open");
 
         // Add event listeners for closing
-        const closeBtn = imageModal.querySelector('.close-image-modal');
-        closeBtn.addEventListener('click', closeModal);
+        const closeBtn = imageModal.querySelector(".close-image-modal");
+        closeBtn.addEventListener("click", closeModal);
 
         // Close on background click
-        imageModal.addEventListener('click', (e) => {
+        imageModal.addEventListener("click", (e) => {
             if (e.target === imageModal) {
                 closeModal();
             }
         });
 
         // Close on ESC key
-        document.addEventListener('keydown', handleEscKey);
+        document.addEventListener("keydown", handleEscKey);
     }
 
     // Close modal
     function closeModal() {
         if (imageModal) {
-            imageModal.classList.remove('show');
-            document.body.classList.remove('modal-open');
+            imageModal.classList.remove("show");
+            document.body.classList.remove("modal-open");
 
             // Remove ESC key listener
-            document.removeEventListener('keydown', handleEscKey);
+            document.removeEventListener("keydown", handleEscKey);
 
             // Clean up modal after animation
             setTimeout(() => {
@@ -216,7 +220,7 @@ function initAcademyImageModal() {
 
     // Handle ESC key press
     function handleEscKey(e) {
-        if (e.key === 'Escape') {
+        if (e.key === "Escape") {
             closeModal();
         }
     }
@@ -225,42 +229,45 @@ function initAcademyImageModal() {
     function addFullscreenListeners() {
         if (!academyImageContainer) return;
 
-        academyImageContainer.addEventListener('click', (e) => {
+        academyImageContainer.addEventListener("click", (e) => {
             e.preventDefault();
-            const img = academyImageContainer.querySelector('img');
+            const img = academyImageContainer.querySelector("img");
             if (img) {
                 openModal(img.src, img.alt);
             }
         });
 
-        academyImageContainer.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter' || e.key === ' ') {
+        academyImageContainer.addEventListener("keydown", (e) => {
+            if (e.key === "Enter" || e.key === " ") {
                 e.preventDefault();
-                const img = academyImageContainer.querySelector('img');
+                const img = academyImageContainer.querySelector("img");
                 if (img) {
                     openModal(img.src, img.alt);
                 }
             }
         });
 
-        academyImageContainer.setAttribute('tabindex', '0');
-        academyImageContainer.setAttribute('role', 'button');
-        academyImageContainer.setAttribute('aria-label', 'View image in fullscreen');
+        academyImageContainer.setAttribute("tabindex", "0");
+        academyImageContainer.setAttribute("role", "button");
+        academyImageContainer.setAttribute(
+            "aria-label",
+            "View image in fullscreen",
+        );
     }
 
     // Function to remove event listeners
     function removeFullscreenListeners() {
         if (!academyImageContainer) return;
 
-        academyImageContainer.removeEventListener('click', openModal);
-        academyImageContainer.removeEventListener('keydown', openModal);
-        academyImageContainer.removeAttribute('tabindex');
-        academyImageContainer.removeAttribute('role');
-        academyImageContainer.removeAttribute('aria-label');
+        academyImageContainer.removeEventListener("click", openModal);
+        academyImageContainer.removeEventListener("keydown", openModal);
+        academyImageContainer.removeAttribute("tabindex");
+        academyImageContainer.removeAttribute("role");
+        academyImageContainer.removeAttribute("aria-label");
     }
 
     // Media query to detect mobile devices
-    const mobileMediaQuery = window.matchMedia('(max-width: 768px)');
+    const mobileMediaQuery = window.matchMedia("(max-width: 768px)");
 
     // Function to handle media query changes
     function handleMediaChange(e) {
@@ -282,8 +289,8 @@ function initAcademyImageModal() {
 
 // Animate cards with stagger effect
 function animateCards() {
-    const cards = document.querySelectorAll('.card');
-    
+    const cards = document.querySelectorAll(".card");
+
     cards.forEach((card, index) => {
         setTimeout(() => {
             card.style.animationDelay = `${index * 0.2}s`;
@@ -293,74 +300,74 @@ function animateCards() {
 
 // 3-Sponsor Horizontal Carousel
 function initTriangleCarousel() {
-    const sponsorSlides = document.querySelectorAll('.sponsor-slide');
-    const progressDots = document.querySelectorAll('.progress-dot');
-    
+    const sponsorSlides = document.querySelectorAll(".sponsor-slide");
+    const progressDots = document.querySelectorAll(".progress-dot");
+
     if (sponsorSlides.length === 0) return;
-    
+
     let currentIndex = 0;
     const totalSlides = sponsorSlides.length;
     let autoRotateInterval;
-    
+
     function updateCarousel() {
         // Remove all positioning classes from all slides
-        sponsorSlides.forEach(slide => {
-            slide.classList.remove('focal', 'side-left', 'side-right');
+        sponsorSlides.forEach((slide) => {
+            slide.classList.remove("focal", "side-left", "side-right");
         });
-        
+
         // Calculate positions for 3-sponsor view
         // Current focal sponsor (center)
-        sponsorSlides[currentIndex].classList.add('focal');
-        
+        sponsorSlides[currentIndex].classList.add("focal");
+
         // Left side sponsor (previous in sequence)
         const leftIndex = (currentIndex - 1 + totalSlides) % totalSlides;
-        sponsorSlides[leftIndex].classList.add('side-left');
-        
+        sponsorSlides[leftIndex].classList.add("side-left");
+
         // Right side sponsor (next in sequence)
         const rightIndex = (currentIndex + 1) % totalSlides;
-        sponsorSlides[rightIndex].classList.add('side-right');
-        
+        sponsorSlides[rightIndex].classList.add("side-right");
+
         // Update progress dots
         progressDots.forEach((dot, index) => {
-            dot.classList.toggle('active', index === currentIndex);
+            dot.classList.toggle("active", index === currentIndex);
         });
     }
-    
+
     function nextSponsor() {
         currentIndex = (currentIndex + 1) % totalSlides;
         updateCarousel();
     }
-    
+
     function startAutoRotate() {
         if (autoRotateInterval) clearInterval(autoRotateInterval);
         // Continuous infinite loop - always moving to the right
         autoRotateInterval = setInterval(nextSponsor, 5000); // 5 seconds per sponsor
     }
-    
+
     function stopAutoRotate() {
         if (autoRotateInterval) clearInterval(autoRotateInterval);
     }
-    
+
     // Optional: Allow manual control by clicking on progress dots
     progressDots.forEach((dot, index) => {
-        dot.addEventListener('click', () => {
+        dot.addEventListener("click", () => {
             stopAutoRotate();
             currentIndex = index;
             updateCarousel();
             startAutoRotate();
         });
     });
-    
+
     // Optional: Pause on hover over the carousel area
-    const sponsorsContainer = document.querySelector('.sponsors-container');
+    const sponsorsContainer = document.querySelector(".sponsors-container");
     if (sponsorsContainer) {
-        sponsorsContainer.addEventListener('mouseenter', stopAutoRotate);
-        sponsorsContainer.addEventListener('mouseleave', startAutoRotate);
+        sponsorsContainer.addEventListener("mouseenter", stopAutoRotate);
+        sponsorsContainer.addEventListener("mouseleave", startAutoRotate);
     }
-    
+
     // Initialize carousel
     updateCarousel();
-    
+
     // Start auto-rotation after a brief delay to let animations settle
     setTimeout(() => {
         startAutoRotate();
@@ -370,315 +377,355 @@ function initTriangleCarousel() {
 // Recruitment page functionality
 function initRecruitmentPage() {
     // Only run on recruitment page
-    if (!document.querySelector('.recruitment-container')) return;
-    
-    const testimonialCards = document.querySelectorAll('.testimonial-card');
-    const videoModal = document.getElementById('videoModal');
-    const closeModal = document.querySelector('.close-modal');
-    const modalPlayerName = document.getElementById('modalPlayerName');
-    const modalPlayerPosition = document.getElementById('modalPlayerPosition');
-    const modalTestimonialText = document.getElementById('modalTestimonialText');
-    const modalVideo = document.getElementById('modalVideo');
-    const modalVideoSource = document.getElementById('modalVideoSource');
-    
+    if (!document.querySelector(".recruitment-container")) return;
+
+    const testimonialCards = document.querySelectorAll(".testimonial-card");
+    const videoModal = document.getElementById("videoModal");
+    const closeModal = document.querySelector(".close-modal");
+    const modalPlayerName = document.getElementById("modalPlayerName");
+    const modalPlayerPosition = document.getElementById("modalPlayerPosition");
+    const modalTestimonialText = document.getElementById(
+        "modalTestimonialText",
+    );
+    const modalVideo = document.getElementById("modalVideo");
+    const modalVideoSource = document.getElementById("modalVideoSource");
+
     // Testimonial data
     const testimonialData = {
         1: {
             name: "Blaine Mabie",
             position: "",
             testimonial: "",
-            videoSrc: "Blaine-video.mp4"
+            videoSrc: "Blaine-video.mp4",
         },
         2: {
             name: "Phoenix Coursey",
             position: "",
             testimonial: "",
-            videoSrc: "Phoenix.mp4"
+            videoSrc: "Phoenix.mp4",
         },
         3: {
             name: "Louis Wickremesekera",
             position: "",
             testimonial: "",
-            videoSrc: "Louis.mp4"
+            videoSrc: "Louis.mp4",
         },
         4: {
             name: "Edy Belingher",
             position: "",
             testimonial: "",
-            videoSrc: "Edy-video.mp4"
+            videoSrc: "Edy-video.mp4",
         },
         5: {
             name: "David Park",
             position: "Winger - Former Player",
-            testimonial: "Wanaka FC gave me the foundation for my professional career. The skills, discipline, and values I learned here have stayed with me throughout my journey. Even after moving on to professional football, I still consider Wanaka FC my home club.",
-            videoSrc: "david-park.mp4"
+            testimonial:
+                "Wanaka FC gave me the foundation for my professional career. The skills, discipline, and values I learned here have stayed with me throughout my journey. Even after moving on to professional football, I still consider Wanaka FC my home club.",
+            videoSrc: "david-park.mp4",
         },
         6: {
             name: "Lisa Anderson",
             position: "Captain - Senior Women's Team",
-            testimonial: "The club culture here is amazing. We're not just teammates, we're family. The leadership opportunities, the competitive environment, and the support from the entire club community make Wanaka FC a special place to play football.",
-            videoSrc: "lisa-anderson.mp4"
-        }
+            testimonial:
+                "The club culture here is amazing. We're not just teammates, we're family. The leadership opportunities, the competitive environment, and the support from the entire club community make Wanaka FC a special place to play football.",
+            videoSrc: "lisa-anderson.mp4",
+        },
     };
-    
+
     // Add click event listeners to testimonial cards
-    testimonialCards.forEach(card => {
-        card.addEventListener('click', () => {
-            const videoId = card.getAttribute('data-video');
+    testimonialCards.forEach((card) => {
+        card.addEventListener("click", () => {
+            const videoId = card.getAttribute("data-video");
             const data = testimonialData[videoId];
-            
+
             if (data) {
                 openVideoModal(data);
             }
         });
     });
-    
+
     // Close modal functionality
     if (closeModal) {
-        closeModal.addEventListener('click', () => {
+        closeModal.addEventListener("click", () => {
             closeVideoModal();
         });
     }
-    
+
     // Close modal when clicking outside
-    window.addEventListener('click', (event) => {
+    window.addEventListener("click", (event) => {
         if (event.target === videoModal) {
             closeVideoModal();
         }
     });
-    
+
     // Handle recruitment form submission
-    const recruitmentForm = document.querySelector('.recruitment-form');
+    const recruitmentForm = document.querySelector(".recruitment-form");
     if (recruitmentForm) {
-        recruitmentForm.addEventListener('submit', (e) => {
+        recruitmentForm.addEventListener("submit", (e) => {
             e.preventDefault();
-            
+
             const formData = new FormData(recruitmentForm);
             const data = Object.fromEntries(formData);
-            
+
             // Basic validation
-            if (!data.firstName || !data.lastName || !data.email || !data.phone || 
-                !data.age || !data.position || !data.experience || !data.motivation) {
-                alert('Please fill in all required fields.');
+            if (
+                !data.firstName ||
+                !data.lastName ||
+                !data.email ||
+                !data.phone ||
+                !data.age ||
+                !data.position ||
+                !data.experience ||
+                !data.motivation
+            ) {
+                alert("Please fill in all required fields.");
                 return;
             }
-            
-            const submitBtn = recruitmentForm.querySelector('.submit-btn');
+
+            const submitBtn = recruitmentForm.querySelector(".submit-btn");
             const originalText = submitBtn.textContent;
-            
-            submitBtn.textContent = 'Submitting...';
+
+            submitBtn.textContent = "Submitting...";
             submitBtn.disabled = true;
-            
+
             // Simulate form submission
             setTimeout(() => {
-                alert('Thank you for your application! We\'ll review your information and get back to you within 48 hours.');
+                alert(
+                    "Thank you for your application! We'll review your information and get back to you within 48 hours.",
+                );
                 recruitmentForm.reset();
                 submitBtn.textContent = originalText;
                 submitBtn.disabled = false;
             }, 2000);
         });
     }
-    
+
     // Open video modal
     function openVideoModal(data) {
         modalPlayerName.textContent = data.name;
         modalPlayerPosition.textContent = data.position;
         modalTestimonialText.textContent = data.testimonial;
-        
+
         // Set video source
         modalVideoSource.src = data.videoSrc;
         modalVideo.load(); // Reload video with new source
-        
+
         // Show loading state
         showVideoLoading();
-        
+
         // Handle video load events
-        modalVideo.addEventListener('loadeddata', () => {
+        modalVideo.addEventListener("loadeddata", () => {
             hideVideoLoading();
-            modalVideo.style.display = 'block';
+            modalVideo.style.display = "block";
         });
-        
-        modalVideo.addEventListener('error', () => {
+
+        modalVideo.addEventListener("error", () => {
             showVideoError();
         });
-        
-        videoModal.style.display = 'block';
+
+        videoModal.style.display = "block";
     }
-    
+
     // Close video modal
     function closeVideoModal() {
-        videoModal.style.display = 'none';
-        
+        videoModal.style.display = "none";
+
         // Pause and reset video
         if (modalVideo) {
             modalVideo.pause();
             modalVideo.currentTime = 0;
-            modalVideo.style.display = 'none';
+            modalVideo.style.display = "none";
         }
-        
+
         // Hide loading/error states
         hideVideoLoading();
         hideVideoError();
     }
-    
+
     // Show video loading state
     function showVideoLoading() {
-        const videoContainer = document.querySelector('.video-container');
-        let loadingDiv = videoContainer.querySelector('.video-loading');
-        
+        const videoContainer = document.querySelector(".video-container");
+        let loadingDiv = videoContainer.querySelector(".video-loading");
+
         if (!loadingDiv) {
-            loadingDiv = document.createElement('div');
-            loadingDiv.className = 'video-loading';
+            loadingDiv = document.createElement("div");
+            loadingDiv.className = "video-loading";
             loadingDiv.innerHTML = '<i class="fas fa-spinner"></i>';
             videoContainer.insertBefore(loadingDiv, videoContainer.firstChild);
         }
-        
-        loadingDiv.style.display = 'flex';
-        modalVideo.style.display = 'none';
+
+        loadingDiv.style.display = "flex";
+        modalVideo.style.display = "none";
     }
-    
+
     // Hide video loading state
     function hideVideoLoading() {
-        const loadingDiv = document.querySelector('.video-loading');
+        const loadingDiv = document.querySelector(".video-loading");
         if (loadingDiv) {
-            loadingDiv.style.display = 'none';
+            loadingDiv.style.display = "none";
         }
     }
-    
+
     // Show video error state
     function showVideoError() {
-        const videoContainer = document.querySelector('.video-container');
-        let errorDiv = videoContainer.querySelector('.video-error');
-        
+        const videoContainer = document.querySelector(".video-container");
+        let errorDiv = videoContainer.querySelector(".video-error");
+
         if (!errorDiv) {
-            errorDiv = document.createElement('div');
-            errorDiv.className = 'video-error';
+            errorDiv = document.createElement("div");
+            errorDiv.className = "video-error";
             errorDiv.innerHTML = `
                 <i class="fas fa-exclamation-triangle"></i>
                 <p>Video could not be loaded. Please check that the video file exists.</p>
             `;
             videoContainer.insertBefore(errorDiv, videoContainer.firstChild);
         }
-        
-        errorDiv.style.display = 'flex';
-        modalVideo.style.display = 'none';
+
+        errorDiv.style.display = "flex";
+        modalVideo.style.display = "none";
         hideVideoLoading();
     }
-    
+
     // Hide video error state
     function hideVideoError() {
-        const errorDiv = document.querySelector('.video-error');
+        const errorDiv = document.querySelector(".video-error");
         if (errorDiv) {
-            errorDiv.style.display = 'none';
+            errorDiv.style.display = "none";
         }
     }
 }
 
 // Contact form handling with SMTP2GO integration
 function initContactForm() {
-    const forms = document.querySelectorAll('.contact-form');
-    
+    const forms = document.querySelectorAll(".contact-form");
+
     // Only initialize if contact forms exist
     if (forms.length === 0) return;
-    
-    forms.forEach(form => {
-        form.addEventListener('submit', async (e) => {
+
+    forms.forEach((form) => {
+        form.addEventListener("submit", async (e) => {
             e.preventDefault();
-            
+
             const formData = new FormData(form);
             const data = Object.fromEntries(formData);
-            
+
             // Validate required fields
             if (!data.name || !data.email || !data.message) {
-                showFormMessage(form, 'Please fill in all required fields.', 'error');
+                showFormMessage(
+                    form,
+                    "Please fill in all required fields.",
+                    "error",
+                );
                 return;
             }
-            
+
             // Validate email format
             const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
             if (!emailRegex.test(data.email)) {
-                showFormMessage(form, 'Please enter a valid email address.', 'error');
+                showFormMessage(
+                    form,
+                    "Please enter a valid email address.",
+                    "error",
+                );
                 return;
             }
-            
+
             // Validate message length
             if (data.message.length < 10) {
-                showFormMessage(form, 'Please enter a message with at least 10 characters.', 'error');
+                showFormMessage(
+                    form,
+                    "Please enter a message with at least 10 characters.",
+                    "error",
+                );
                 return;
             }
-            
-            const submitBtn = form.querySelector('.submit-btn');
+
+            const submitBtn = form.querySelector(".submit-btn");
             const originalText = submitBtn.textContent;
-            
+
             // Update button state
-            submitBtn.textContent = 'Sending...';
+            submitBtn.textContent = "Sending...";
             submitBtn.disabled = true;
-            
+
             // Determine which page the form is on
             const currentPage = getCurrentPageName();
-            
+
             // Prepare data for submission
             const submissionData = {
                 name: data.name.trim(),
                 email: data.email.trim(),
                 message: data.message.trim(),
-                page: currentPage
+                page: currentPage,
             };
-            
+
             try {
                 // Send form data to PHP handler
-                const response = await fetch('send-email.php', {
-                    method: 'POST',
+                const response = await fetch("send-email.php", {
+                    method: "POST",
                     headers: {
-                        'Content-Type': 'application/json',
+                        "Content-Type": "application/json",
                     },
-                    body: JSON.stringify(submissionData)
+                    body: JSON.stringify(submissionData),
                 });
-                
+
                 // Check if response is ok
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
-                
+
                 // Check if response is JSON
-                const contentType = response.headers.get('content-type');
-                if (!contentType || !contentType.includes('application/json')) {
+                const contentType = response.headers.get("content-type");
+                if (!contentType || !contentType.includes("application/json")) {
                     // Log the actual response for debugging
                     const responseText = await response.text();
-                    console.error('Non-JSON response received:', responseText);
-                    throw new Error('Server returned non-JSON response. Please check server configuration.');
+                    console.error("Non-JSON response received:", responseText);
+                    throw new Error(
+                        "Server returned non-JSON response. Please check server configuration.",
+                    );
                 }
-                
+
                 const result = await response.json();
-                
+
                 // Validate JSON structure
-                if (typeof result !== 'object' || result === null) {
-                    throw new Error('Invalid response format from server');
+                if (typeof result !== "object" || result === null) {
+                    throw new Error("Invalid response format from server");
                 }
-                
+
                 if (result.success) {
-                    showFormMessage(form, result.message, 'success');
+                    showFormMessage(form, result.message, "success");
                     form.reset();
                 } else {
-                    showFormMessage(form, result.message || 'Unknown error occurred', 'error');
+                    showFormMessage(
+                        form,
+                        result.message || "Unknown error occurred",
+                        "error",
+                    );
                 }
-                
             } catch (error) {
-                console.error('Form submission error:', error);
-                
+                console.error("Form submission error:", error);
+
                 // Provide more specific error messages based on error type
-                let errorMessage = 'Sorry, there was an error sending your message. Please try again later or contact us directly at info@wanakafootball.nz';
-                
-                if (error.name === 'SyntaxError' && error.message.includes('JSON')) {
-                    errorMessage = 'Server configuration error. Please contact us directly at info@wanakafootball.nz';
-                    console.error('JSON parsing failed - server likely returned HTML error page');
-                } else if (error.message.includes('HTTP error')) {
-                    errorMessage = 'Server error occurred. Please try again or contact us directly at info@wanakafootball.nz';
-                } else if (error.message.includes('Failed to fetch')) {
-                    errorMessage = 'Network error. Please check your connection and try again.';
+                let errorMessage =
+                    "Sorry, there was an error sending your message. Please try again later or contact us directly at info@wanakafootball.nz";
+
+                if (
+                    error.name === "SyntaxError" &&
+                    error.message.includes("JSON")
+                ) {
+                    errorMessage =
+                        "Server configuration error. Please contact us directly at info@wanakafootball.nz";
+                    console.error(
+                        "JSON parsing failed - server likely returned HTML error page",
+                    );
+                } else if (error.message.includes("HTTP error")) {
+                    errorMessage =
+                        "Server error occurred. Please try again or contact us directly at info@wanakafootball.nz";
+                } else if (error.message.includes("Failed to fetch")) {
+                    errorMessage =
+                        "Network error. Please check your connection and try again.";
                 }
-                
-                showFormMessage(form, errorMessage, 'error');
+
+                showFormMessage(form, errorMessage, "error");
             } finally {
                 // Reset button state
                 submitBtn.textContent = originalText;
@@ -691,22 +738,22 @@ function initContactForm() {
 // Helper function to show form messages
 function showFormMessage(form, message, type) {
     // Remove any existing message
-    const existingMessage = form.querySelector('.form-message');
+    const existingMessage = form.querySelector(".form-message");
     if (existingMessage) {
         existingMessage.remove();
     }
-    
+
     // Create new message element
-    const messageDiv = document.createElement('div');
+    const messageDiv = document.createElement("div");
     messageDiv.className = `form-message form-message-${type}`;
     messageDiv.textContent = message;
-    
+
     // Insert message before the submit button
-    const submitBtn = form.querySelector('.submit-btn');
+    const submitBtn = form.querySelector(".submit-btn");
     form.insertBefore(messageDiv, submitBtn);
-    
+
     // Auto-remove success messages after 5 seconds
-    if (type === 'success') {
+    if (type === "success") {
         setTimeout(() => {
             if (messageDiv.parentNode) {
                 messageDiv.remove();
@@ -718,24 +765,24 @@ function showFormMessage(form, message, type) {
 // Helper function to get current page name
 function getCurrentPageName() {
     const path = window.location.pathname;
-    const page = path.split('/').pop();
-    
+    const page = path.split("/").pop();
+
     switch (page) {
-        case 'index.html':
-        case '':
-            return 'Home';
-        case 'the-academy.html':
-            return 'The Academy';
-        case 'junior-grassroots.html':
-            return 'Junior Grassroots';
-        case 'about.html':
-            return 'About';
-        case 'recruitment.html':
-            return 'Recruitment';
-        case 'wanaka-tournament.html':
-            return 'Wanaka Tournament';
+        case "index.html":
+        case "":
+            return "Home";
+        case "the-academy.html":
+            return "The Academy";
+        case "junior-grassroots.html":
+            return "Junior Grassroots";
+        case "about.html":
+            return "About";
+        case "recruitment.html":
+            return "Recruitment";
+        case "wanaka-tournament.html":
+            return "Wanaka Tournament";
         default:
-            return 'Website';
+            return "Website";
     }
 }
 
@@ -743,53 +790,53 @@ function getCurrentPageName() {
 function updateFixtures() {
     const fixtures = {
         lastMatch: {
-            home: 'Wānaka FC',
-            away: 'Nelson Suburbs',
-            homeScore: 3,
+            home: "Wānaka FC",
+            away: "Nelson Suburbs",
+            homeScore: 5,
             awayScore: 1,
-            date: '2025-09-13'
+            date: "2025-09-13",
         },
         nextMatch: {
-            home: 'Wānaka FC',
-            away: 'Valley Rovers',
-            date: '2024-01-22',
-            time: '14:00',
-            location: 'Wanaka Sports Ground'
-        }
+            home: "Wānaka FC",
+            away: "Valley Rovers",
+            date: "2024-01-22",
+            time: "14:00",
+            location: "Wanaka Rec Centre",
+        },
     };
-    
-    const lastMatchCard = document.querySelector('.fixture-card:first-child');
-    const nextMatchCard = document.querySelector('.fixture-card:last-child');
-    
+
+    const lastMatchCard = document.querySelector(".fixture-card:first-child");
+    const nextMatchCard = document.querySelector(".fixture-card:last-child");
+
     if (lastMatchCard) {
-        lastMatchCard.querySelector('.match-team').textContent = 
+        lastMatchCard.querySelector(".match-team").textContent =
             `${fixtures.lastMatch.home} vs ${fixtures.lastMatch.away}`;
-        lastMatchCard.querySelector('.match-result').textContent = 
+        lastMatchCard.querySelector(".match-result").textContent =
             `${fixtures.lastMatch.homeScore} - ${fixtures.lastMatch.awayScore}`;
     }
-    
+
     if (nextMatchCard) {
-        nextMatchCard.querySelector('.match-team').textContent = 
+        nextMatchCard.querySelector(".match-team").textContent =
             `${fixtures.nextMatch.home} vs ${fixtures.nextMatch.away}`;
-        nextMatchCard.querySelector('.match-info').innerHTML = 
+        nextMatchCard.querySelector(".match-info").innerHTML =
             `${fixtures.nextMatch.date} at ${fixtures.nextMatch.time}<br>${fixtures.nextMatch.location}`;
     }
 }
 
-document.addEventListener('DOMContentLoaded', updateFixtures);
+document.addEventListener("DOMContentLoaded", updateFixtures);
 
 // Landing Phase Transition functionality
 function initLandingTransition() {
-    const phase1 = document.querySelector('.phase-1');
-    const phase2 = document.querySelector('.phase-2');
-    
+    const phase1 = document.querySelector(".phase-1");
+    const phase2 = document.querySelector(".phase-2");
+
     if (!phase1 || !phase2) return;
-    
+
     // Start the transition after 5 seconds
     setTimeout(() => {
-        phase1.classList.remove('active');
-        phase2.classList.add('active');
-        
+        phase1.classList.remove("active");
+        phase2.classList.add("active");
+
         // Trigger phase-2 text animations when the phase becomes active
         // The CSS animations will now start because .phase-2.active selectors are triggered
     }, 2500);
@@ -799,69 +846,81 @@ function initLandingTransition() {
 let isScrolling = false;
 
 function initCustomScrollBehavior() {
-    const sections = document.querySelectorAll('.section');
-    
-    // Only apply custom scroll behavior if there are multiple .section elements AND 
+    const sections = document.querySelectorAll(".section");
+
+    // Only apply custom scroll behavior if there are multiple .section elements AND
     // they include the main container (indicating this is the homepage with full-page sections)
-    const mainContainer = document.querySelector('.main-container');
-    
+    const mainContainer = document.querySelector(".main-container");
+
     if (sections.length === 0 || !mainContainer || sections.length < 3) {
-        console.log('No full-page section layout detected, using default scroll behavior');
+        console.log(
+            "No full-page section layout detected, using default scroll behavior",
+        );
         return;
     }
-    
-    console.log(`Found ${sections.length} .section elements with main-container, applying custom scroll behavior`);
-    
-    window.addEventListener('wheel', (e) => {
+
+    console.log(
+        `Found ${sections.length} .section elements with main-container, applying custom scroll behavior`,
+    );
+
+    window.addEventListener("wheel", (e) => {
         if (isScrolling) return;
-        
+
         // Prevent default scroll behavior only on pages with sections
         e.preventDefault();
-        
+
         isScrolling = true;
-        
-        const currentSection = Array.from(sections).findIndex(section => {
+
+        const currentSection = Array.from(sections).findIndex((section) => {
             const rect = section.getBoundingClientRect();
             return rect.top <= 100 && rect.bottom > 100;
         });
-        
+
         let nextSection = currentSection;
-        
+
         if (e.deltaY > 0 && currentSection < sections.length - 1) {
             nextSection = currentSection + 1;
         } else if (e.deltaY < 0 && currentSection > 0) {
             nextSection = currentSection - 1;
         }
-        
-        if (nextSection >= 0 && nextSection < sections.length && sections[nextSection]) {
-            sections[nextSection].scrollIntoView({ behavior: 'smooth' });
+
+        if (
+            nextSection >= 0 &&
+            nextSection < sections.length &&
+            sections[nextSection]
+        ) {
+            sections[nextSection].scrollIntoView({ behavior: "smooth" });
         }
-        
+
         setTimeout(() => {
             isScrolling = false;
         }, 1000);
     });
 
     // Keyboard navigation - only for pages with sections
-    document.addEventListener('keydown', (e) => {
-        if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+    document.addEventListener("keydown", (e) => {
+        if (e.key === "ArrowDown" || e.key === "ArrowUp") {
             e.preventDefault();
-            
-            const currentSection = Array.from(sections).findIndex(section => {
+
+            const currentSection = Array.from(sections).findIndex((section) => {
                 const rect = section.getBoundingClientRect();
                 return rect.top <= 100 && rect.bottom > 100;
             });
-            
+
             let nextSection = currentSection;
-            
-            if (e.key === 'ArrowDown' && currentSection < sections.length - 1) {
+
+            if (e.key === "ArrowDown" && currentSection < sections.length - 1) {
                 nextSection = currentSection + 1;
-            } else if (e.key === 'ArrowUp' && currentSection > 0) {
+            } else if (e.key === "ArrowUp" && currentSection > 0) {
                 nextSection = currentSection - 1;
             }
-            
-            if (nextSection >= 0 && nextSection < sections.length && sections[nextSection]) {
-                sections[nextSection].scrollIntoView({ behavior: 'smooth' });
+
+            if (
+                nextSection >= 0 &&
+                nextSection < sections.length &&
+                sections[nextSection]
+            ) {
+                sections[nextSection].scrollIntoView({ behavior: "smooth" });
             }
         }
     });
@@ -870,15 +929,15 @@ function initCustomScrollBehavior() {
 // Tournament Images Fullscreen Functionality
 function initTournamentImageModal() {
     // Only run on tournament page
-    if (!document.querySelector('.tournament-images-section')) return;
-    
-    const tournamentImages = document.querySelectorAll('.tournament-image img');
+    if (!document.querySelector(".tournament-images-section")) return;
+
+    const tournamentImages = document.querySelectorAll(".tournament-image img");
     let imageModal = null;
-    
+
     // Create modal HTML structure
     function createModal() {
-        const modal = document.createElement('div');
-        modal.className = 'image-modal';
+        const modal = document.createElement("div");
+        modal.className = "image-modal";
         modal.innerHTML = `
             <div class="modal-image-container">
                 <span class="close-image-modal">&times;</span>
@@ -888,44 +947,44 @@ function initTournamentImageModal() {
         document.body.appendChild(modal);
         return modal;
     }
-    
+
     // Open modal with image
     function openModal(imageSrc, imageAlt) {
         if (!imageModal) {
             imageModal = createModal();
         }
-        
-        const modalImage = imageModal.querySelector('.modal-image');
+
+        const modalImage = imageModal.querySelector(".modal-image");
         modalImage.src = imageSrc;
         modalImage.alt = imageAlt;
-        
-        imageModal.classList.add('show');
-        document.body.classList.add('modal-open');
-        
+
+        imageModal.classList.add("show");
+        document.body.classList.add("modal-open");
+
         // Add event listeners for closing
-        const closeBtn = imageModal.querySelector('.close-image-modal');
-        closeBtn.addEventListener('click', closeModal);
-        
+        const closeBtn = imageModal.querySelector(".close-image-modal");
+        closeBtn.addEventListener("click", closeModal);
+
         // Close on background click
-        imageModal.addEventListener('click', (e) => {
+        imageModal.addEventListener("click", (e) => {
             if (e.target === imageModal) {
                 closeModal();
             }
         });
-        
+
         // Close on ESC key
-        document.addEventListener('keydown', handleEscKey);
+        document.addEventListener("keydown", handleEscKey);
     }
-    
+
     // Close modal
     function closeModal() {
         if (imageModal) {
-            imageModal.classList.remove('show');
-            document.body.classList.remove('modal-open');
-            
+            imageModal.classList.remove("show");
+            document.body.classList.remove("modal-open");
+
             // Remove ESC key listener
-            document.removeEventListener('keydown', handleEscKey);
-            
+            document.removeEventListener("keydown", handleEscKey);
+
             // Clean up modal after animation
             setTimeout(() => {
                 if (imageModal && imageModal.parentNode) {
@@ -935,32 +994,35 @@ function initTournamentImageModal() {
             }, 300);
         }
     }
-    
+
     // Handle ESC key press
     function handleEscKey(e) {
-        if (e.key === 'Escape') {
+        if (e.key === "Escape") {
             closeModal();
         }
     }
-    
+
     // Add click event listeners to tournament images
-    tournamentImages.forEach(img => {
-        img.parentElement.addEventListener('click', (e) => {
+    tournamentImages.forEach((img) => {
+        img.parentElement.addEventListener("click", (e) => {
             e.preventDefault();
             openModal(img.src, img.alt);
         });
-        
+
         // Add keyboard accessibility
-        img.parentElement.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter' || e.key === ' ') {
+        img.parentElement.addEventListener("keydown", (e) => {
+            if (e.key === "Enter" || e.key === " ") {
                 e.preventDefault();
                 openModal(img.src, img.alt);
             }
         });
-        
+
         // Make focusable for keyboard navigation
-        img.parentElement.setAttribute('tabindex', '0');
-        img.parentElement.setAttribute('role', 'button');
-        img.parentElement.setAttribute('aria-label', 'View image in fullscreen');
+        img.parentElement.setAttribute("tabindex", "0");
+        img.parentElement.setAttribute("role", "button");
+        img.parentElement.setAttribute(
+            "aria-label",
+            "View image in fullscreen",
+        );
     });
 }
