@@ -33,6 +33,10 @@ waitForPort = 5000
 localPort = 5000
 externalPort = 80
 
+[[ports]]
+localPort = 36841
+externalPort = 3000
+
 [deployment]
 deploymentTarget = "autoscale"
 run = ["bash", "-lc", "php -S 0.0.0.0:${PORT}"]

@@ -1,6 +1,6 @@
 <?php
 // Router script for PHP built-in server
-// Handles 404 errors by redirecting to index.html
+// Handles 404 errors by serving index.html content directly
 
 // Get the requested URI
 $requestUri = $_SERVER['REQUEST_URI'];
@@ -27,24 +27,25 @@ if ($realPath && strpos($realPath, $docRoot) === 0 && file_exists($realPath)) {
     return false;
 }
 
-// Handle special PHP files (like send-email.php)
-if (pathinfo($filePath, PATHINFO_EXTENSION) === 'php' && file_exists($fullPath)) {
-    // Let PHP handle the file normally
-    return false;
+// For all other cases (404 errors), serve index.html content directly
+$indexPath = __DIR__ . '/index.html';
+
+if (file_exists($indexPath)) {
+    // Set appropriate headers
+    http_response_code(200);
+    header('Content-Type: text/html; charset=UTF-8');
+    header('Cache-Control: no-cache, no-store, must-revalidate');
+    header('Pragma: no-cache');
+    header('Expires: 0');
+    
+    // Serve the index.html content
+    readfile($indexPath);
+    exit();
+} else {
+    // Fallback if index.html doesn't exist
+    http_response_code(404);
+    header('Content-Type: text/html; charset=UTF-8');
+    echo '<html><body><h1>404 Not Found</h1><p>The requested page was not found and the homepage is not available.</p></body></html>';
+    exit();
 }
-
-// Check for common static file extensions that should be served if they exist
-$staticExtensions = ['html', 'htm', 'css', 'js', 'png', 'jpg', 'jpeg', 'gif', 'ico', 'svg', 'pdf', 'mp4', 'webm'];
-$fileExtension = strtolower(pathinfo($filePath, PATHINFO_EXTENSION));
-
-if (in_array($fileExtension, $staticExtensions) && file_exists($fullPath)) {
-    // Let the built-in server serve static files
-    return false;
-}
-
-// For all other cases (404 errors), redirect to index.html
-// Set the appropriate headers for redirect
-http_response_code(302);
-header('Location: /index.html');
-exit();
 ?>
