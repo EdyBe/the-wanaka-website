@@ -372,6 +372,20 @@ body {
     overflow: visible;
 }
 
+/* Additional styles for external form elements */
+.section-6 * {
+    overflow: visible !important;
+    max-height: none !important;
+}
+
+.section-6 div[id*="form"],
+.section-6 div[class*="form"],
+.section-6 form {
+    overflow: visible !important;
+    height: auto !important;
+    max-height: none !important;
+}
+
 /* Responsive adjustments for registration section */
 @media (max-width: 768px) {
     .section-6 {
