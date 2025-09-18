@@ -310,6 +310,18 @@ body {
     background: linear-gradient(135deg, var(--primary-dark), var(--primary-gold));
 }
 
+/* Registration Section Specific Styles */
+.section-6 {
+    height: auto;
+    min-height: 100vh;
+    padding: 2rem 0;
+}
+
+.section-6 .about-simple {
+    padding: 4rem 2rem;
+    min-height: auto;
+}
+
 .section-6 .section-image{
     opacity: 1;
     position: relative;
@@ -327,6 +339,34 @@ body {
 
 .section-6 .background-overlay {
     z-index: 1;
+}
+
+/* Registration form container styling */
+.section-6 .about-simple > div {
+    margin-top: 2rem;
+    width: 100%;
+    max-width: 100%;
+}
+
+/* Responsive adjustments for registration section */
+@media (max-width: 768px) {
+    .section-6 {
+        padding: 1.5rem 0;
+    }
+    
+    .section-6 .about-simple {
+        padding: 3rem 1rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .section-6 {
+        padding: 1rem 0;
+    }
+    
+    .section-6 .about-simple {
+        padding: 2rem 1rem;
+    }
 }
 
 .section-4 {
