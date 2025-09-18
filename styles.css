@@ -188,9 +188,30 @@ body {
     width: 100vw;
 }
 
-/* Override section defaults specifically for registration page only */
-body:has([title="Registration"]) .section.section-6,
-html[data-page="register"] .section.section-6 {
+/* Registration page specific styles - target by content */
+.section-6:has(script[src*="register.js"]) {
+    height: auto !important;
+    min-height: 100vh !important;
+    max-height: none !important;
+    overflow: visible !important;
+    overflow-y: auto !important;
+    align-items: flex-start !important;
+    padding-top: 80px !important;
+    padding-bottom: 2rem !important;
+    display: block !important;
+}
+
+/* Fallback: Apply to section-6 that contains registration form script */
+.section-6 .about-simple:has(script[src*="loadform/register.js"]) {
+    overflow: visible !important;
+}
+
+.section-6 .about-simple:has(script[src*="loadform/register.js"]) ~ * {
+    overflow: visible !important;
+}
+
+/* More specific targeting for registration section */
+section[id="registration"].section-6 {
     height: auto !important;
     min-height: 100vh !important;
     max-height: none !important;
