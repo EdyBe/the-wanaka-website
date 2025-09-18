@@ -192,10 +192,13 @@ body {
 .section.section-6 {
     height: auto !important;
     min-height: 100vh !important;
+    max-height: none !important;
     overflow: visible !important;
     overflow-y: auto !important;
     align-items: flex-start !important;
     padding-top: 80px !important;
+    padding-bottom: 2rem !important;
+    display: block !important;
 }
 
 /* Disable scroll-snap on mobile devices for smooth scrolling */
