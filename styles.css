@@ -310,18 +310,6 @@ body {
     background: linear-gradient(135deg, var(--primary-dark), var(--primary-gold));
 }
 
-/* Registration Section Specific Styles */
-.section-6 {
-    height: auto;
-    min-height: 100vh;
-    padding: 2rem 0;
-}
-
-.section-6 .about-simple {
-    padding: 4rem 2rem;
-    min-height: auto;
-}
-
 .section-6 .section-image{
     opacity: 1;
     position: relative;
@@ -341,31 +329,71 @@ body {
     z-index: 1;
 }
 
-/* Registration form container styling */
+/* Registration Section Specific Styles - Fix form display issues */
+.section-6 {
+    height: auto !important;
+    min-height: 100vh;
+    padding: 2rem 0;
+    overflow: visible !important;
+    overflow-y: auto !important;
+}
+
+.section-6 .about-simple {
+    padding: 4rem 2rem;
+    min-height: auto;
+    overflow: visible;
+}
+
+/* Registration form container styling - ensure it can expand */
 .section-6 .about-simple > div {
     margin-top: 2rem;
     width: 100%;
     max-width: 100%;
+    overflow: visible;
+    min-height: auto;
+}
+
+/* Ensure the embedded form iframe can display properly */
+.section-6 iframe {
+    width: 100% !important;
+    min-height: 600px !important;
+    height: auto !important;
+    border: none;
+    overflow: visible;
 }
 
 /* Responsive adjustments for registration section */
 @media (max-width: 768px) {
     .section-6 {
         padding: 1.5rem 0;
+        overflow: visible !important;
+        overflow-y: auto !important;
+        height: auto !important;
     }
     
     .section-6 .about-simple {
         padding: 3rem 1rem;
+    }
+    
+    .section-6 iframe {
+        min-height: 700px !important;
     }
 }
 
 @media (max-width: 480px) {
     .section-6 {
         padding: 1rem 0;
+        overflow: visible !important;
+        overflow-y: auto !important;
+        height: auto !important;
     }
     
     .section-6 .about-simple {
         padding: 2rem 1rem;
+    }
+    
+    .section-6 iframe {
+        min-height: 800px !important;
     }
 }
 
