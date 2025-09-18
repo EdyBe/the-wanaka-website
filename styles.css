@@ -188,6 +188,16 @@ body {
     width: 100vw;
 }
 
+/* Override section defaults specifically for registration page */
+.section.section-6 {
+    height: auto !important;
+    min-height: 100vh !important;
+    overflow: visible !important;
+    overflow-y: auto !important;
+    align-items: flex-start !important;
+    padding-top: 80px !important;
+}
+
 /* Disable scroll-snap on mobile devices for smooth scrolling */
 @media (max-width: 768px) {
     .main-container {
