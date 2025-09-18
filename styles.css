@@ -188,8 +188,9 @@ body {
     width: 100vw;
 }
 
-/* Override section defaults specifically for registration page */
-.section.section-6 {
+/* Override section defaults specifically for registration page only */
+body:has([title="Registration"]) .section.section-6,
+html[data-page="register"] .section.section-6 {
     height: auto !important;
     min-height: 100vh !important;
     max-height: none !important;
