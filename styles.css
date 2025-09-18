@@ -188,30 +188,8 @@ body {
     width: 100vw;
 }
 
-/* Registration page specific styles - target by content */
-.section-6:has(script[src*="register.js"]) {
-    height: auto !important;
-    min-height: 100vh !important;
-    max-height: none !important;
-    overflow: visible !important;
-    overflow-y: auto !important;
-    align-items: flex-start !important;
-    padding-top: 80px !important;
-    padding-bottom: 2rem !important;
-    display: block !important;
-}
-
-/* Fallback: Apply to section-6 that contains registration form script */
-.section-6 .about-simple:has(script[src*="loadform/register.js"]) {
-    overflow: visible !important;
-}
-
-.section-6 .about-simple:has(script[src*="loadform/register.js"]) ~ * {
-    overflow: visible !important;
-}
-
-/* More specific targeting for registration section */
-section[id="registration"].section-6 {
+/* Registration page specific styles - target only registration page */
+.section-6.registration-page {
     height: auto !important;
     min-height: 100vh !important;
     max-height: none !important;
@@ -364,23 +342,15 @@ section[id="registration"].section-6 {
     z-index: 1;
 }
 
-/* Registration Section Specific Styles - Fix form display issues */
-.section-6 {
-    height: auto !important;
-    min-height: 100vh;
-    padding: 2rem 0;
-    overflow: visible !important;
-    overflow-y: auto !important;
-}
-
-.section-6 .about-simple {
+/* Registration Section Specific Styles - Fix form display issues - ONLY for registration page */
+.section-6.registration-page .about-simple {
     padding: 4rem 2rem;
     min-height: auto;
     overflow: visible;
 }
 
 /* Registration form container styling - ensure it can expand */
-.section-6 .about-simple > div {
+.section-6.registration-page .about-simple > div {
     margin-top: 2rem;
     width: 100%;
     max-width: 100%;
@@ -389,7 +359,7 @@ section[id="registration"].section-6 {
 }
 
 /* Ensure the embedded form iframe can display properly */
-.section-6 iframe {
+.section-6.registration-page iframe {
     width: 100% !important;
     min-height: 1200px !important;
     height: auto !important;
@@ -398,14 +368,14 @@ section[id="registration"].section-6 {
 }
 
 /* Additional styles for external form elements */
-.section-6 * {
+.section-6.registration-page * {
     overflow: visible !important;
     max-height: none !important;
 }
 
-.section-6 div[id*="form"],
-.section-6 div[class*="form"],
-.section-6 form {
+.section-6.registration-page div[id*="form"],
+.section-6.registration-page div[class*="form"],
+.section-6.registration-page form {
     overflow: visible !important;
     height: auto !important;
     max-height: none !important;
@@ -413,35 +383,35 @@ section[id="registration"].section-6 {
 
 /* Responsive adjustments for registration section */
 @media (max-width: 768px) {
-    .section-6 {
+    .section-6.registration-page {
         padding: 1.5rem 0;
         overflow: visible !important;
         overflow-y: auto !important;
         height: auto !important;
     }
     
-    .section-6 .about-simple {
+    .section-6.registration-page .about-simple {
         padding: 3rem 1rem;
     }
     
-    .section-6 iframe {
+    .section-6.registration-page iframe {
         min-height: 1000px !important;
     }
 }
 
 @media (max-width: 480px) {
-    .section-6 {
+    .section-6.registration-page {
         padding: 1rem 0;
         overflow: visible !important;
         overflow-y: auto !important;
         height: auto !important;
     }
     
-    .section-6 .about-simple {
+    .section-6.registration-page .about-simple {
         padding: 2rem 1rem;
     }
     
-    .section-6 iframe {
+    .section-6.registration-page iframe {
         min-height: 1200px !important;
     }
 }
