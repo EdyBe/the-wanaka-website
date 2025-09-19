@@ -188,19 +188,6 @@ body {
     width: 100vw;
 }
 
-/* Registration page specific styles - target only registration page */
-.section-6.registration-page {
-    height: auto !important;
-    min-height: 100vh !important;
-    max-height: none !important;
-    overflow: visible !important;
-    overflow-y: auto !important;
-    align-items: flex-start !important;
-    padding-top: 80px !important;
-    padding-bottom: 2rem !important;
-    display: block !important;
-}
-
 /* Disable scroll-snap on mobile devices for smooth scrolling */
 @media (max-width: 768px) {
     .main-container {
@@ -340,80 +327,6 @@ body {
 
 .section-6 .background-overlay {
     z-index: 1;
-}
-
-/* Registration Section Specific Styles - Fix form display issues - ONLY for registration page */
-.section-6.registration-page .about-simple {
-    padding: 4rem 2rem;
-    min-height: auto;
-    overflow: visible;
-}
-
-/* Registration form container styling - ensure it can expand */
-.section-6.registration-page .about-simple > div {
-    margin-top: 2rem;
-    width: 100%;
-    max-width: 100%;
-    overflow: visible;
-    min-height: auto;
-}
-
-/* Ensure the embedded form iframe can display properly */
-.section-6.registration-page iframe {
-    width: 100% !important;
-    min-height: 1200px !important;
-    height: auto !important;
-    border: none;
-    overflow: visible;
-}
-
-/* Additional styles for external form elements */
-.section-6.registration-page * {
-    overflow: visible !important;
-    max-height: none !important;
-}
-
-.section-6.registration-page div[id*="form"],
-.section-6.registration-page div[class*="form"],
-.section-6.registration-page form {
-    overflow: visible !important;
-    height: auto !important;
-    max-height: none !important;
-}
-
-/* Responsive adjustments for registration section */
-@media (max-width: 768px) {
-    .section-6.registration-page {
-        padding: 1.5rem 0;
-        overflow: visible !important;
-        overflow-y: auto !important;
-        height: auto !important;
-    }
-    
-    .section-6.registration-page .about-simple {
-        padding: 3rem 1rem;
-    }
-    
-    .section-6.registration-page iframe {
-        min-height: 1000px !important;
-    }
-}
-
-@media (max-width: 480px) {
-    .section-6.registration-page {
-        padding: 1rem 0;
-        overflow: visible !important;
-        overflow-y: auto !important;
-        height: auto !important;
-    }
-    
-    .section-6.registration-page .about-simple {
-        padding: 2rem 1rem;
-    }
-    
-    .section-6.registration-page iframe {
-        min-height: 1200px !important;
-    }
 }
 
 .section-4 {
