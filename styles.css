@@ -1025,6 +1025,34 @@ body {
     opacity: 0.9;
 }
 
+/* Registration page specific fixes for scrolling */
+#registration .about-simple {
+    max-height: none;
+    overflow-y: auto;
+    min-height: calc(100vh - 160px); /* Account for navbar and footer */
+    padding-bottom: 6rem; /* Extra space for scrolling */
+}
+
+/* Ensure registration section allows scrolling */
+#registration {
+    height: auto !important;
+    min-height: 100vh;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+/* Style the injected registration forms */
+#registration .about-simple > div {
+    max-width: 100%;
+    overflow-y: visible;
+    margin-top: 2rem;
+}
+
+/* Ensure body allows scrolling on registration page */
+body:has(#registration) {
+    overflow-y: auto !important;
+}
+
 /* About Page Styles */
 .about-container {
     padding-top: 80px;
