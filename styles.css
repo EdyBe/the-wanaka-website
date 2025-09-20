@@ -189,7 +189,7 @@ body {
 /* Registration page specific styles - target only registration page */
 .section-6.registration-page {
     height: auto !important;
-    min-height: 100vh !important;
+    min-height: 60vh !important; /* Start with shorter height */
     max-height: none !important;
     overflow: visible !important;
     overflow-y: auto !important;
@@ -197,6 +197,12 @@ body {
     padding-top: 80px !important;
     padding-bottom: 2rem !important;
     display: block !important;
+    transition: min-height 0.5s ease-in-out !important; /* Smooth height transition */
+}
+
+/* Expanded state - when form is opened */
+.section-6.registration-page.form-expanded {
+    min-height: 100vh !important; /* Return to full height when expanded */
 }
 
 
