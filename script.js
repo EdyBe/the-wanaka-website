@@ -984,8 +984,8 @@ function updateFixtures() {
         lastMatch: {
             home: 'Wānaka FC',
             away: 'Nelson Suburbs',
-            homeScore: 3,
-            awayScore: 1,
+            homeScore: 1,
+            awayScore: 5,
             date: '2025-09-13'
         },
         nextMatch: {
