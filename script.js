@@ -724,6 +724,7 @@ function initRegistrationPage() {
     let resizeObserver = null;
     let mutationObserver = null;
     let heightCheckInterval = null;
+    const registrationSection = document.querySelector('.registration-page');
     
     // Function to find and monitor the iframe
     function findAndMonitorIframe() {
@@ -735,6 +736,22 @@ function initRegistrationPage() {
         } else {
             // If iframe not found, check again after a short delay
             setTimeout(findAndMonitorIframe, 500);
+        }
+    }
+    
+    // Function to expand the registration section
+    function expandRegistrationSection() {
+        if (registrationSection && !registrationSection.classList.contains('form-expanded')) {
+            registrationSection.classList.add('form-expanded');
+            console.log('Registration section expanded');
+        }
+    }
+    
+    // Function to collapse the registration section
+    function collapseRegistrationSection() {
+        if (registrationSection && registrationSection.classList.contains('form-expanded')) {
+            registrationSection.classList.remove('form-expanded');
+            console.log('Registration section collapsed');
         }
     }
     
@@ -751,13 +768,15 @@ function initRegistrationPage() {
                     const currentMinHeight = parseInt(window.getComputedStyle(iframe).minHeight);
                     
                     // If content is significantly larger than current min-height, expand
-                    if (contentHeight > currentMinHeight + 100) {
+                    if (contentHeight > currentMinHeight + 200) {
                         iframe.classList.add('expanded');
+                        expandRegistrationSection();
                         console.log('Registration form expanded - height adjusted');
                     }
                     // If content is much smaller and form seems collapsed, shrink
                     else if (contentHeight < 600 && iframe.classList.contains('expanded')) {
                         iframe.classList.remove('expanded');
+                        collapseRegistrationSection();
                         console.log('Registration form collapsed - height adjusted');
                     }
                 }
@@ -773,10 +792,30 @@ function initRegistrationPage() {
             const iframeRect = iframe.getBoundingClientRect();
             
             // If iframe appears to be loading content (common behavior)
-            if (iframeRect.height > window.innerHeight * 0.8) {
+            if (iframeRect.height > window.innerHeight * 0.7) {
                 if (!iframe.classList.contains('expanded')) {
                     iframe.classList.add('expanded');
+                    expandRegistrationSection();
                     console.log('Registration form likely expanded - height adjusted (alternative method)');
+                }
+            } else if (iframeRect.height < window.innerHeight * 0.5 && iframe.classList.contains('expanded')) {
+                iframe.classList.remove('expanded');
+                collapseRegistrationSection();
+                console.log('Registration form likely collapsed - height adjusted (alternative method)');
+            }
+        }
+        
+        // Enhanced detection for form interactions
+        function detectFormInteraction() {
+            // Check if there are any form elements or buttons that might indicate form expansion
+            const registrationContainer = document.querySelector('.registration-page .about-simple > div');
+            if (registrationContainer) {
+                // Look for signs of form expansion
+                const containerHeight = registrationContainer.getBoundingClientRect().height;
+                if (containerHeight > window.innerHeight * 0.6) {
+                    expandRegistrationSection();
+                    iframe.classList.add('expanded');
+                    console.log('Form expansion detected via container height');
                 }
             }
         }
@@ -788,9 +827,16 @@ function initRegistrationPage() {
                     const { height } = entry.contentRect;
                     
                     // If iframe height increases significantly, it's likely expanded
-                    if (height > window.innerHeight * 0.8 && !iframe.classList.contains('expanded')) {
+                    if (height > window.innerHeight * 0.7 && !iframe.classList.contains('expanded')) {
                         iframe.classList.add('expanded');
+                        expandRegistrationSection();
                         console.log('Registration form expanded detected via ResizeObserver');
+                    }
+                    // If iframe height decreases significantly, it might be collapsed
+                    else if (height < window.innerHeight * 0.5 && iframe.classList.contains('expanded')) {
+                        iframe.classList.remove('expanded');
+                        collapseRegistrationSection();
+                        console.log('Registration form collapsed detected via ResizeObserver');
                     }
                 }
             });
@@ -798,41 +844,55 @@ function initRegistrationPage() {
             resizeObserver.observe(iframe);
         }
         
-        // Set up MutationObserver to watch for changes in iframe attributes
+        // Set up MutationObserver to watch for changes in iframe attributes and DOM
         if (window.MutationObserver) {
             mutationObserver = new MutationObserver((mutations) => {
                 mutations.forEach((mutation) => {
                     if (mutation.type === 'attributes' && 
                         (mutation.attributeName === 'style' || mutation.attributeName === 'height')) {
-                        checkIframeHeight();
+                        setTimeout(checkIframeHeight, 100);
+                    }
+                    // Also watch for child node changes that might indicate form loading
+                    else if (mutation.type === 'childList') {
+                        setTimeout(detectFormInteraction, 200);
                     }
                 });
             });
             
             mutationObserver.observe(iframe, {
                 attributes: true,
-                attributeFilter: ['style', 'height']
+                attributeFilter: ['style', 'height', 'class'],
+                childList: true,
+                subtree: true
             });
         }
         
         // Periodic height check as fallback
-        heightCheckInterval = setInterval(checkIframeHeight, 2000);
+        heightCheckInterval = setInterval(() => {
+            checkIframeHeight();
+            detectFormInteraction();
+        }, 3000);
         
         // Initial height check after iframe loads
         iframe.addEventListener('load', () => {
-            setTimeout(checkIframeHeight, 1000);
+            setTimeout(() => {
+                checkIframeHeight();
+                detectFormInteraction();
+            }, 1500);
         });
         
         // Listen for postMessage events from iframe (if the form sends them)
         window.addEventListener('message', (event) => {
             // Check if message is from the registration form
             if (event.data && typeof event.data === 'object') {
-                if (event.data.type === 'formExpanded' || event.data.height) {
+                if (event.data.type === 'formExpanded' || event.data.height > window.innerHeight * 0.7) {
                     iframe.classList.add('expanded');
+                    expandRegistrationSection();
                     console.log('Registration form expanded via postMessage');
                 }
-                else if (event.data.type === 'formCollapsed') {
+                else if (event.data.type === 'formCollapsed' || event.data.height < window.innerHeight * 0.5) {
                     iframe.classList.remove('expanded');
+                    collapseRegistrationSection();
                     console.log('Registration form collapsed via postMessage');
                 }
             }
@@ -842,12 +902,31 @@ function initRegistrationPage() {
         document.addEventListener('click', (e) => {
             // If click is within the registration section, check height after a delay
             if (e.target.closest('.registration-page')) {
-                setTimeout(checkIframeHeight, 500);
+                setTimeout(() => {
+                    checkIframeHeight();
+                    detectFormInteraction();
+                }, 800);
             }
         });
         
-        // Initial check
+        // Monitor scroll events that might indicate form expansion
+        window.addEventListener('scroll', () => {
+            if (document.querySelector('.registration-page')) {
+                setTimeout(detectFormInteraction, 300);
+            }
+        });
+        
+        // Initial checks with staggered delays
         setTimeout(checkIframeHeight, 2000);
+        setTimeout(detectFormInteraction, 3000);
+        setTimeout(() => {
+            // Final check to ensure proper state
+            const iframeRect = iframe.getBoundingClientRect();
+            if (iframeRect.height > window.innerHeight * 0.7) {
+                expandRegistrationSection();
+                iframe.classList.add('expanded');
+            }
+        }, 5000);
     }
     
     // Cleanup function
@@ -905,8 +984,8 @@ function updateFixtures() {
         lastMatch: {
             home: 'Wānaka FC',
             away: 'Nelson Suburbs',
-            homeScore: 1,
-            awayScore: 5,
+            homeScore: 3,
+            awayScore: 1,
             date: '2025-09-13'
         },
         nextMatch: {
