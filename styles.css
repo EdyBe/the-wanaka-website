@@ -171,7 +171,6 @@ body {
 
 /* Main Container */
 .main-container {
-    scroll-snap-type: y mandatory;
     overflow-y: scroll;
     min-height: 100vh;
     width: 100vw;
@@ -179,7 +178,6 @@ body {
 
 .section {
     height: 100vh;
-    scroll-snap-align: start;
     position: relative;
     display: flex;
     align-items: center;
@@ -188,16 +186,20 @@ body {
     width: 100vw;
 }
 
-/* Disable scroll-snap on mobile devices for smooth scrolling */
-@media (max-width: 768px) {
-    .main-container {
-        scroll-snap-type: none;
-    }
-    
-    .section {
-        scroll-snap-align: none;
-    }
+/* Registration page specific styles - target only registration page */
+.section-6.registration-page {
+    height: auto !important;
+    min-height: 100vh !important;
+    max-height: none !important;
+    overflow: visible !important;
+    overflow-y: auto !important;
+    align-items: flex-start !important;
+    padding-top: 80px !important;
+    padding-bottom: 2rem !important;
+    display: block !important;
 }
+
+
 
 .background-overlay {
     position: absolute;
@@ -329,12 +331,162 @@ body {
     z-index: 1;
 }
 
+/* Registration Section Specific Styles - Fix form display issues - ONLY for registration page */
+.section-6.registration-page .about-simple {
+    padding: 4rem 2rem;
+    min-height: auto;
+    overflow: visible;
+}
+
+/* Registration form container styling - ensure it can expand */
+.section-6.registration-page .about-simple > div {
+    margin-top: 2rem;
+    width: 100%;
+    max-width: 100%;
+    overflow: visible;
+    min-height: auto;
+}
+
+/* Ensure the embedded form iframe can display properly */
+.section-6.registration-page iframe {
+    width: 100% !important;
+    min-height: 60vh !important;
+    height: auto !important;
+    border: none;
+    overflow: visible;
+    transition: min-height 0.3s ease;
+}
+
+/* Dynamic height class for expanded form */
+.section-6.registration-page iframe.expanded {
+    min-height: 1200px !important;
+}
+
+/* Additional styles for external form elements */
+.section-6.registration-page * {
+    overflow: visible !important;
+    max-height: none !important;
+}
+
+.section-6.registration-page div[id*="form"],
+.section-6.registration-page div[class*="form"],
+.section-6.registration-page form {
+    overflow: visible !important;
+    height: auto !important;
+    max-height: none !important;
+}
+
+/* Responsive adjustments for registration section */
+@media (max-width: 768px) {
+    .section-6.registration-page {
+        padding: 1.5rem 0;
+        overflow: visible !important;
+        overflow-y: auto !important;
+        height: auto !important;
+    }
+    
+    .section-6.registration-page .about-simple {
+        padding: 3rem 1rem;
+    }
+    
+    .section-6.registration-page iframe {
+        min-height: 50vh !important;
+    }
+    
+    .section-6.registration-page iframe.expanded {
+        min-height: 1000px !important;
+    }
+}
+
+@media (max-width: 480px) {
+    .section-6.registration-page {
+        padding: 1rem 0;
+        overflow: visible !important;
+        overflow-y: auto !important;
+        height: auto !important;
+    }
+    
+    .section-6.registration-page .about-simple {
+        padding: 2rem 1rem;
+    }
+    
+    .section-6.registration-page iframe {
+        min-height: 45vh !important;
+    }
+    
+    .section-6.registration-page iframe.expanded {
+        min-height: 1200px !important;
+    }
+}
+
 .section-4 {
     background: url('https://images.unsplash.com/photo-1574629810360-7ef8eb8b5d3b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80') center/cover;
 }
 
 .section-5 {
     background: linear-gradient(135deg, var(--primary-gold), var(--primary-dark));
+    /* Fix for contact section display issues across all screen sizes */
+    min-height: 100vh !important;
+    height: auto !important;
+    padding: 3rem 0 !important;
+}
+
+/* Ensure contact sections have adequate spacing on all devices */
+.section-5 .section-content {
+    padding: 3rem 2rem !important;
+    margin: 2rem 0 !important;
+}
+
+/* Mobile devices */
+@media (max-width: 768px) {
+    .section-5 {
+        min-height: 100vh !important;
+        padding: 2.5rem 0 !important;
+    }
+    
+    .section-5 .section-content {
+        padding: 2.5rem 1.5rem !important;
+        margin: 1.5rem 0 !important;
+    }
+}
+
+/* Small mobile devices */
+@media (max-width: 480px) {
+    .section-5 {
+        min-height: 100vh !important;
+        padding: 2rem 0 !important;
+    }
+    
+    .section-5 .section-content {
+        padding: 2rem 1rem !important;
+        margin: 1rem 0 !important;
+    }
+}
+
+/* Large screens and high DPI displays */
+@media (min-width: 1024px) {
+    .section-5 {
+        min-height: 105vh !important;
+        padding: 4rem 0 !important;
+    }
+    
+    .section-5 .section-content {
+        padding: 4rem 2rem !important;
+        margin: 2rem 0 !important;
+    }
+}
+
+/* Extra large screens */
+@media (min-width: 1440px) {
+    .section-5 {
+        min-height: 110vh !important;
+        padding: 5rem 0 !important;
+    }
+    
+    .section-5 .section-content {
+        padding: 5rem 2rem !important;
+        margin: 2.5rem 0 !important;
+    }
 }
 
 
@@ -1023,34 +1175,6 @@ body {
     line-height: 1.8;
     color: var(--primary-white);
     opacity: 0.9;
-}
-
-/* Registration page specific fixes for scrolling */
-#registration .about-simple {
-    max-height: none;
-    overflow-y: auto;
-    min-height: calc(100vh - 160px); /* Account for navbar and footer */
-    padding-bottom: 6rem; /* Extra space for scrolling */
-}
-
-/* Ensure registration section allows scrolling */
-#registration {
-    height: auto !important;
-    min-height: 100vh;
-    overflow-y: auto;
-    overflow-x: hidden;
-}
-
-/* Style the injected registration forms */
-#registration .about-simple > div {
-    max-width: 100%;
-    overflow-y: visible;
-    margin-top: 2rem;
-}
-
-/* Ensure body allows scrolling on registration page */
-body:has(#registration) {
-    overflow-y: auto !important;
 }
 
 /* About Page Styles */
