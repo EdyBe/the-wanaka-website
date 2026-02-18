@@ -3638,3 +3638,24 @@ body.modal-open {
         font-size: 2rem;
     }
 }
+
+/* Support Link Section */
+.support-link-section {
+    text-align: center;
+    padding: 2rem 1rem;
+    background: var(--primary-dark);
+}
+
+.support-link {
+    color: var(--primary-gold);
+    font-size: 1.1rem;
+    font-weight: 600;
+    text-decoration: none;
+    letter-spacing: 0.05em;
+    transition: opacity 0.3s ease;
+}
+
+.support-link:hover {
+    opacity: 0.8;
+    text-decoration: underline;
+}
