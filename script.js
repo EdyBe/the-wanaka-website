@@ -990,10 +990,10 @@ function updateFixtures() {
         },
         nextMatch: {
             home: 'Wānaka FC',
-            away: 'Valley Rovers',
-            date: '2024-01-22',
+            away: 'Ferrymead FC',
+            date: 'March, 21',
             time: '14:00',
-            location: 'Wanaka Sports Ground'
+            location: 'Wanaka Rec Centre'
         }
     };
     
