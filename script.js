@@ -978,44 +978,6 @@ function getCurrentPageName() {
     }
 }
 
-// Dynamic fixture updates
-function updateFixtures() {
-    const fixtures = {
-        lastMatch: {
-            home: 'Wānaka FC',
-            away: 'Nelson Suburbs',
-            homeScore: 1,
-            awayScore: 5,
-            date: '2025-09-13'
-        },
-        nextMatch: {
-            home: 'Wānaka FC',
-            away: 'Ferrymead FC',
-            date: 'March, 21',
-            time: '14:00',
-            location: 'Wanaka Rec Centre'
-        }
-    };
-    
-    const lastMatchCard = document.querySelector('.fixture-card:first-child');
-    const nextMatchCard = document.querySelector('.fixture-card:last-child');
-    
-    if (lastMatchCard) {
-        lastMatchCard.querySelector('.match-team').textContent = 
-            `${fixtures.lastMatch.home} vs ${fixtures.lastMatch.away}`;
-        lastMatchCard.querySelector('.match-result').textContent = 
-            `${fixtures.lastMatch.homeScore} - ${fixtures.lastMatch.awayScore}`;
-    }
-    
-    if (nextMatchCard) {
-        nextMatchCard.querySelector('.match-team').textContent = 
-            `${fixtures.nextMatch.home} vs ${fixtures.nextMatch.away}`;
-        nextMatchCard.querySelector('.match-info').innerHTML = 
-            `${fixtures.nextMatch.date} at ${fixtures.nextMatch.time}<br>${fixtures.nextMatch.location}`;
-    }
-}
-
-document.addEventListener('DOMContentLoaded', updateFixtures);
 
 // Landing Phase Transition functionality
 function initLandingTransition() {
