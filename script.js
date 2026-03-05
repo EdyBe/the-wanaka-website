@@ -358,10 +358,17 @@ function initTriangleCarousel() {
         sponsorsContainer.addEventListener('mouseleave', startAutoRotate);
     }
     
-    // Initialize carousel
+    sponsorSlides.forEach(slide => {
+        const url = slide.dataset.url;
+        if (url) {
+            slide.addEventListener('click', () => {
+                window.open(url, '_blank', 'noopener,noreferrer');
+            });
+        }
+    });
+
     updateCarousel();
     
-    // Start auto-rotation after a brief delay to let animations settle
     setTimeout(() => {
         startAutoRotate();
     }, 1000);
