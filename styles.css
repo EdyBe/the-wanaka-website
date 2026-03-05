@@ -803,7 +803,9 @@ body {
     margin: 0;
 }
 
-.sponsor-slide[data-url] {
+a.sponsor-slide {
+    text-decoration: none;
+    color: inherit;
     cursor: pointer;
 }
 

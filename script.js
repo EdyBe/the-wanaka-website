@@ -358,21 +358,6 @@ function initTriangleCarousel() {
         sponsorsContainer.addEventListener('mouseleave', startAutoRotate);
     }
     
-    sponsorSlides.forEach(slide => {
-        const url = slide.dataset.url;
-        if (url) {
-            slide.addEventListener('click', () => {
-                const a = document.createElement('a');
-                a.href = url;
-                a.target = '_blank';
-                a.rel = 'noopener noreferrer';
-                document.body.appendChild(a);
-                a.click();
-                document.body.removeChild(a);
-            });
-        }
-    });
-
     updateCarousel();
     
     setTimeout(() => {
