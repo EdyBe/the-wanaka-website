@@ -362,7 +362,7 @@ function initTriangleCarousel() {
         const url = slide.dataset.url;
         if (url) {
             slide.addEventListener('click', () => {
-                window.open(url, '_blank', 'noopener,noreferrer');
+                window.open(url, '_blank');
             });
         }
     });
