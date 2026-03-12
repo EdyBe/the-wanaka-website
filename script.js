@@ -713,241 +713,31 @@ function showFormMessage(form, message, type) {
     }
 }
 
-// Registration page dynamic height functionality
+// Registration page - listen for postMessage height updates from embedded form
 function initRegistrationPage() {
-    // Only run on registration page
     if (!document.querySelector('.registration-page')) return;
-    
-    let iframe = null;
-    let resizeObserver = null;
-    let mutationObserver = null;
-    let heightCheckInterval = null;
-    const registrationSection = document.querySelector('.registration-page');
-    
-    // Function to find and monitor the iframe
-    function findAndMonitorIframe() {
-        iframe = document.querySelector('.registration-page iframe');
-        
-        if (iframe) {
-            console.log('Registration iframe found, setting up dynamic height monitoring...');
-            setupDynamicHeight();
-        } else {
-            // If iframe not found, check again after a short delay
-            setTimeout(findAndMonitorIframe, 500);
-        }
-    }
-    
-    // Function to expand the registration section
-    function expandRegistrationSection() {
-        if (registrationSection && !registrationSection.classList.contains('form-expanded')) {
-            registrationSection.classList.add('form-expanded');
-            console.log('Registration section expanded');
-        }
-    }
-    
-    // Function to collapse the registration section
-    function collapseRegistrationSection() {
-        if (registrationSection && registrationSection.classList.contains('form-expanded')) {
-            registrationSection.classList.remove('form-expanded');
-            console.log('Registration section collapsed');
-        }
-    }
-    
-    // Function to setup dynamic height monitoring
-    function setupDynamicHeight() {
+
+    window.addEventListener('message', (event) => {
+        const iframe = document.querySelector('.registration-page iframe');
         if (!iframe) return;
-        
-        // Function to check and update iframe height
-        function checkIframeHeight() {
-            try {
-                // Try to access iframe content height
-                if (iframe.contentDocument && iframe.contentDocument.body) {
-                    const contentHeight = iframe.contentDocument.body.scrollHeight;
-                    const currentMinHeight = parseInt(window.getComputedStyle(iframe).minHeight);
-                    
-                    // If content is significantly larger than current min-height, expand
-                    if (contentHeight > currentMinHeight + 200) {
-                        iframe.classList.add('expanded');
-                        expandRegistrationSection();
-                        console.log('Registration form expanded - height adjusted');
-                    }
-                    // If content is much smaller and form seems collapsed, shrink
-                    else if (contentHeight < 600 && iframe.classList.contains('expanded')) {
-                        iframe.classList.remove('expanded');
-                        collapseRegistrationSection();
-                        console.log('Registration form collapsed - height adjusted');
-                    }
-                }
-            } catch (e) {
-                // Cross-origin restrictions - use alternative method
-                checkIframeHeightAlternative();
-            }
+
+        const data = event.data;
+        if (!data) return;
+
+        let height = null;
+        if (typeof data === 'number') {
+            height = data;
+        } else if (typeof data === 'object') {
+            height = data.height || data.frameHeight || data.size || null;
+        } else if (typeof data === 'string') {
+            const parsed = parseInt(data, 10);
+            if (!isNaN(parsed)) height = parsed;
         }
-        
-        // Alternative method when cross-origin restrictions apply
-        function checkIframeHeightAlternative() {
-            // Monitor for changes in iframe's natural height
-            const iframeRect = iframe.getBoundingClientRect();
-            
-            // If iframe appears to be loading content (common behavior)
-            if (iframeRect.height > window.innerHeight * 0.7) {
-                if (!iframe.classList.contains('expanded')) {
-                    iframe.classList.add('expanded');
-                    expandRegistrationSection();
-                    console.log('Registration form likely expanded - height adjusted (alternative method)');
-                }
-            } else if (iframeRect.height < window.innerHeight * 0.5 && iframe.classList.contains('expanded')) {
-                iframe.classList.remove('expanded');
-                collapseRegistrationSection();
-                console.log('Registration form likely collapsed - height adjusted (alternative method)');
-            }
+
+        if (height && height > 100) {
+            iframe.style.minHeight = height + 'px';
         }
-        
-        // Enhanced detection for form interactions
-        function detectFormInteraction() {
-            // Check if there are any form elements or buttons that might indicate form expansion
-            const registrationContainer = document.querySelector('.registration-page .about-simple > div');
-            if (registrationContainer) {
-                // Look for signs of form expansion
-                const containerHeight = registrationContainer.getBoundingClientRect().height;
-                if (containerHeight > window.innerHeight * 0.6) {
-                    expandRegistrationSection();
-                    iframe.classList.add('expanded');
-                    console.log('Form expansion detected via container height');
-                }
-            }
-        }
-        
-        // Set up ResizeObserver to monitor iframe size changes
-        if (window.ResizeObserver) {
-            resizeObserver = new ResizeObserver((entries) => {
-                for (let entry of entries) {
-                    const { height } = entry.contentRect;
-                    
-                    // If iframe height increases significantly, it's likely expanded
-                    if (height > window.innerHeight * 0.7 && !iframe.classList.contains('expanded')) {
-                        iframe.classList.add('expanded');
-                        expandRegistrationSection();
-                        console.log('Registration form expanded detected via ResizeObserver');
-                    }
-                    // If iframe height decreases significantly, it might be collapsed
-                    else if (height < window.innerHeight * 0.5 && iframe.classList.contains('expanded')) {
-                        iframe.classList.remove('expanded');
-                        collapseRegistrationSection();
-                        console.log('Registration form collapsed detected via ResizeObserver');
-                    }
-                }
-            });
-            
-            resizeObserver.observe(iframe);
-        }
-        
-        // Set up MutationObserver to watch for changes in iframe attributes and DOM
-        if (window.MutationObserver) {
-            mutationObserver = new MutationObserver((mutations) => {
-                mutations.forEach((mutation) => {
-                    if (mutation.type === 'attributes' && 
-                        (mutation.attributeName === 'style' || mutation.attributeName === 'height')) {
-                        setTimeout(checkIframeHeight, 100);
-                    }
-                    // Also watch for child node changes that might indicate form loading
-                    else if (mutation.type === 'childList') {
-                        setTimeout(detectFormInteraction, 200);
-                    }
-                });
-            });
-            
-            mutationObserver.observe(iframe, {
-                attributes: true,
-                attributeFilter: ['style', 'height', 'class'],
-                childList: true,
-                subtree: true
-            });
-        }
-        
-        // Periodic height check as fallback
-        heightCheckInterval = setInterval(() => {
-            checkIframeHeight();
-            detectFormInteraction();
-        }, 3000);
-        
-        // Initial height check after iframe loads
-        iframe.addEventListener('load', () => {
-            setTimeout(() => {
-                checkIframeHeight();
-                detectFormInteraction();
-            }, 1500);
-        });
-        
-        // Listen for postMessage events from iframe (if the form sends them)
-        window.addEventListener('message', (event) => {
-            // Check if message is from the registration form
-            if (event.data && typeof event.data === 'object') {
-                if (event.data.type === 'formExpanded' || event.data.height > window.innerHeight * 0.7) {
-                    iframe.classList.add('expanded');
-                    expandRegistrationSection();
-                    console.log('Registration form expanded via postMessage');
-                }
-                else if (event.data.type === 'formCollapsed' || event.data.height < window.innerHeight * 0.5) {
-                    iframe.classList.remove('expanded');
-                    collapseRegistrationSection();
-                    console.log('Registration form collapsed via postMessage');
-                }
-            }
-        });
-        
-        // Monitor for user interactions that might trigger form expansion
-        document.addEventListener('click', (e) => {
-            // If click is within the registration section, check height after a delay
-            if (e.target.closest('.registration-page')) {
-                setTimeout(() => {
-                    checkIframeHeight();
-                    detectFormInteraction();
-                }, 800);
-            }
-        });
-        
-        // Monitor scroll events that might indicate form expansion
-        window.addEventListener('scroll', () => {
-            if (document.querySelector('.registration-page')) {
-                setTimeout(detectFormInteraction, 300);
-            }
-        });
-        
-        // Initial checks with staggered delays
-        setTimeout(checkIframeHeight, 2000);
-        setTimeout(detectFormInteraction, 3000);
-        setTimeout(() => {
-            // Final check to ensure proper state
-            const iframeRect = iframe.getBoundingClientRect();
-            if (iframeRect.height > window.innerHeight * 0.7) {
-                expandRegistrationSection();
-                iframe.classList.add('expanded');
-            }
-        }, 5000);
-    }
-    
-    // Cleanup function
-    function cleanup() {
-        if (resizeObserver) {
-            resizeObserver.disconnect();
-            resizeObserver = null;
-        }
-        if (mutationObserver) {
-            mutationObserver.disconnect();
-            mutationObserver = null;
-        }
-        if (heightCheckInterval) {
-            clearInterval(heightCheckInterval);
-            heightCheckInterval = null;
-        }
-    }
-    
-    // Start monitoring
-    findAndMonitorIframe();
-    
-    // Cleanup on page unload
-    window.addEventListener('beforeunload', cleanup);
+    });
 }
 
 // Helper function to get current page name
