@@ -30,6 +30,16 @@ The contact form requires SMTP2GO credentials to function. Add these to your Rep
 
 Without these credentials, the contact form will return a configuration error message.
 
+## Pages
+- `index.html` — Homepage with fixtures, sponsors carousel, contact form
+- `the-academy.html` — Academy programme info
+- `junior-grassroots.html` — Junior grassroots info and season details
+- `seniors.html` — Senior teams info
+- `about.html` — About the club
+- `register.html` — Registration via FriendlyManager embedded form
+- `holiday-program.html` — April school holiday football programme (U7–U12, 8–9 April, Kelly's Flat) with FriendlyManager programs.js signup form
+- `support.html` — Sponsorship / Summit Club donation page ($500 Stripe link placeholder)
+
 ## Project Architecture
 - **Frontend Server**: PHP built-in server serving static files and handling contact form submissions
 - **Email System**: SMTP2GO integration with PHPMailer for reliable email delivery
