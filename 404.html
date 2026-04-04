@@ -1,15 +1,102 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8" />
-        <meta http-equiv="refresh" content="0; url=/" />
-        <title>Page Not Found</title>
-        <meta name="robots" content="noindex" />
-    </head>
-    <body>
-        <p>
-            If you are not redirected,
-            <a href="/">click here to go to the homepage</a>.
-        </p>
-    </body>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex">
+    <title>Page Not Found - Wānaka FC</title>
+    <link rel="icon" type="image/png" href="/Wanaka Logo.png">
+    <link rel="stylesheet" href="/styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Archivo:ital,wght@0,100..900;1,100..900&family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+        }
+        .error-page {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            background: linear-gradient(135deg, #1a1a0e, #2d2a14);
+            padding: 2rem;
+            color: white;
+            font-family: 'Inter', sans-serif;
+        }
+        .error-logo {
+            width: 80px;
+            margin-bottom: 2rem;
+            opacity: 0.9;
+        }
+        .error-number {
+            font-size: clamp(6rem, 20vw, 12rem);
+            font-weight: 800;
+            color: #c8b273;
+            line-height: 1;
+            margin: 0 0 0.5rem;
+        }
+        .error-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1.5rem;
+            opacity: 0.6;
+        }
+        .error-title {
+            font-size: clamp(1.5rem, 4vw, 2.2rem);
+            font-weight: 700;
+            margin: 0 0 1rem;
+        }
+        .error-message {
+            font-size: 1.05rem;
+            opacity: 0.75;
+            max-width: 460px;
+            line-height: 1.6;
+            margin: 0 0 2.5rem;
+        }
+        .error-links {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .error-btn {
+            display: inline-block;
+            padding: 0.85rem 2rem;
+            border-radius: 4px;
+            font-weight: 600;
+            text-decoration: none;
+            font-size: 1rem;
+            transition: opacity 0.2s ease;
+        }
+        .error-btn.primary {
+            background: #c8b273;
+            color: #1a1a0e;
+        }
+        .error-btn.secondary {
+            border: 2px solid #c8b273;
+            color: #c8b273;
+        }
+        .error-btn:hover {
+            opacity: 0.82;
+        }
+    </style>
+</head>
+<body>
+    <div class="error-page">
+        <img src="/Wanaka Logo.png" alt="Wānaka FC Logo" class="error-logo">
+        <div class="error-number">404</div>
+        <div class="error-icon"><i class="fas fa-futbol"></i></div>
+        <h1 class="error-title">Page Not Found</h1>
+        <p class="error-message">Looks like this page went out of bounds. The page you're looking for doesn't exist or may have been moved.</p>
+        <div class="error-links">
+            <a href="/" class="error-btn primary">Back to Home</a>
+            <a href="/register.html" class="error-btn secondary">Register Now</a>
+        </div>
+    </div>
+</body>
 </html>
