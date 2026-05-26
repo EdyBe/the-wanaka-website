@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Director of Football - Wānaka FC</title>
+    <meta name="description" content="Wānaka FC is seeking a Director of Football to lead our club. A senior, paid coaching role in one of the most spectacular locations in the world.">
+    <link rel="icon" type="image/png" href="Wanaka Logo.png">
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Archivo:ital,wght@0,100..900;1,100..900&family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+    <script defer data-domain="wafc" src="https://plausible.io/js/script.js"></script>
+    <style>
+        /* ── Hero ── */
+        .dof-hero {
+            position: relative;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            text-align: center;
+        }
+        .dof-hero-bg {
+            position: absolute;
+            inset: 0;
+            background: url('FC_Background.jpg') center center / cover no-repeat;
+            filter: brightness(0.45);
+            z-index: 0;
+        }
+        .dof-hero-content {
+            position: relative;
+            z-index: 1;
+            color: white;
+            padding: 2rem 1.5rem;
+            max-width: 800px;
+        }
+        .dof-hero-eyebrow {
+            font-size: 0.85rem;
+            font-weight: 600;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            color: #c8b273;
+            margin-bottom: 1.2rem;
+        }
+        .dof-hero-title {
+            font-family: 'Montserrat', 'Inter', sans-serif;
+            font-size: clamp(2.4rem, 7vw, 4.8rem);
+            font-weight: 800;
+            line-height: 1.08;
+            margin: 0 0 1rem;
+            letter-spacing: -0.01em;
+        }
+        .dof-hero-sub {
+            font-size: clamp(1rem, 2.5vw, 1.25rem);
+            opacity: 0.85;
+            margin: 0 0 2.2rem;
+            font-style: italic;
+        }
+        .dof-meta {
+            display: flex;
+            gap: 1.5rem;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-bottom: 2.5rem;
+            font-size: 0.95rem;
+            opacity: 0.8;
+        }
+        .dof-meta span {
+            display: flex;
+            align-items: center;
+            gap: 0.45rem;
+        }
+        .dof-meta i {
+            color: #c8b273;
+        }
+        .dof-apply-btn {
+            display: inline-block;
+            background: #c8b273;
+            color: #1a1a0e;
+            font-weight: 700;
+            font-size: 1.05rem;
+            padding: 1rem 2.8rem;
+            border-radius: 4px;
+            text-decoration: none;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+            transition: background 0.2s ease, transform 0.15s ease;
+        }
+        .dof-apply-btn:hover {
+            background: #d9c48a;
+            transform: translateY(-2px);
+        }
+
+        /* ── Body Sections ── */
+        .dof-body {
+            background: #0f0f08;
+            color: #e8e4d8;
+        }
+        .dof-section {
+            max-width: 860px;
+            margin: 0 auto;
+            padding: 4rem 1.5rem;
+            border-bottom: 1px solid rgba(200, 178, 115, 0.15);
+        }
+        .dof-section:last-of-type {
+            border-bottom: none;
+        }
+        .dof-section h2 {
+            font-family: 'Montserrat', 'Inter', sans-serif;
+            font-size: clamp(1.5rem, 3.5vw, 2rem);
+            font-weight: 800;
+            color: #c8b273;
+            margin: 0 0 1.2rem;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+        }
+        .dof-section p {
+            font-size: 1.05rem;
+            line-height: 1.75;
+            color: #c8c4b4;
+            margin: 0 0 1rem;
+        }
+        .dof-section p:last-child {
+            margin-bottom: 0;
+        }
+
+        /* ── Lists ── */
+        .dof-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        .dof-list li {
+            position: relative;
+            padding: 0.55rem 0 0.55rem 1.8rem;
+            font-size: 1.05rem;
+            line-height: 1.6;
+            color: #c8c4b4;
+            border-bottom: 1px solid rgba(200, 178, 115, 0.08);
+        }
+        .dof-list li:last-child {
+            border-bottom: none;
+        }
+        .dof-list li::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #c8b273;
+        }
+
+        /* ── CTA bottom ── */
+        .dof-cta {
+            background: linear-gradient(135deg, #1a1a0e, #252510);
+            text-align: center;
+            padding: 5rem 1.5rem;
+        }
+        .dof-cta h2 {
+            font-family: 'Montserrat', 'Inter', sans-serif;
+            font-size: clamp(1.6rem, 4vw, 2.4rem);
+            font-weight: 800;
+            color: white;
+            margin: 0 0 0.8rem;
+        }
+        .dof-cta p {
+            color: rgba(255,255,255,0.65);
+            font-size: 1.05rem;
+            margin: 0 0 2rem;
+        }
+        .dof-cta .dof-apply-btn {
+            font-size: 1.1rem;
+            padding: 1.1rem 3.2rem;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <a href="index.html"><img src="Wanaka Logo.png" alt="Wānaka FC Logo">
+                <span>Wānaka FC</span></a>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="index.html" class="nav-link">Home</a></li>
+                <li><a href="the-academy.html" class="nav-link">The Academy</a></li>
+                <li><a href="junior-grassroots.html" class="nav-link">Junior Grassroots</a></li>
+                <li><a href="seniors.html" class="nav-link">Seniors</a></li>
+                <li><a href="about.html" class="nav-link">About</a></li>
+                <li><a href="register.html" class="nav-link">Register</a></li>
+                <li><a href="https://wanaka.footballhq.co.nz" target="_blank" class="nav-link">Club Shop</a></li>
+            </ul>
+            <div class="hamburger">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero -->
+    <section class="dof-hero">
+        <div class="dof-hero-bg"></div>
+        <div class="dof-hero-content">
+            <p class="dof-hero-eyebrow">Career Opportunity &mdash; Wānaka FC</p>
+            <h1 class="dof-hero-title">Director of Football</h1>
+            <p class="dof-hero-sub">Coach the beautiful game in the most beautiful location.</p>
+            <div class="dof-meta">
+                <span><i class="fas fa-briefcase"></i> Full-time</span>
+                <span><i class="fas fa-map-marker-alt"></i> Wānaka, New Zealand</span>
+                <span><i class="fas fa-futbol"></i> Southern League</span>
+            </div>
+            <a href="https://form.asana.com/?k=6qTjlAk7lVqTCroyz0yk4A&d=1210704782452555" target="_blank" rel="noopener" class="dof-apply-btn">Apply Now</a>
+        </div>
+    </section>
+
+    <!-- Body Content -->
+    <div class="dof-body">
+
+        <!-- About the Club -->
+        <section class="dof-section">
+            <h2>About the Club</h2>
+            <p>We are Wānaka FC, a club competing in the Southern League, with over 500 junior members, a year-round Academy programme, and men's teams. Since our founding in 2010, we have grown into one of the most ambitious football clubs in regional New Zealand, making history as the smallest town to field a team in the NZ National League.</p>
+            <p>At the heart of everything we do is player development. We believe that developing players the right way — technically, tactically, and as people — is the foundation of a great football club. We play a possession-based game, invest in educating our players at every level, and take pride in creating clear pathways from our junior programme through to the first team and beyond. Wānaka FC is a stepping stone to higher levels of football for local youth and visiting men's players.</p>
+        </section>
+
+        <!-- The Role -->
+        <section class="dof-section">
+            <h2>The Role</h2>
+            <p>As Director of Football, you will have oversight of all on-field activity at the club — the driving force behind our football identity, from the men's first team to our youngest players.</p>
+            <p>Your responsibilities will include:</p>
+            <ul class="dof-list">
+                <li>Head Coach of the Wānaka FC men's first team in the Southern League</li>
+                <li>Running and coaching within the year-round Academy programme, developing the next generation of players</li>
+                <li>Creating and implementing clear player development pathways from junior football through to the senior men's team</li>
+                <li>Directing, mentoring and educating coaches within the club</li>
+                <li>Overseeing and leading the club's year-round football programmes across junior, youth and senior football</li>
+                <li>Contributing to the strategic development of football at Wānaka FC</li>
+            </ul>
+            <p style="margin-top: 1.5rem; font-style: italic; opacity: 0.7;">Ideally, you will start the role in October 2026.</p>
+        </section>
+
+        <!-- What We Offer -->
+        <section class="dof-section">
+            <h2>What We Offer</h2>
+            <ul class="dof-list">
+                <li>Competitive remuneration</li>
+                <li>Full club infrastructure — Academy programme, 500+ junior members, men's Southern League team, established community presence</li>
+                <li>Autonomy — a real opportunity to shape the football identity of a pioneering club</li>
+                <li>The lifestyle — Wānaka means skiing, lake sports, hiking, and mountain scenery. This is not a compromise; it is a feature.</li>
+            </ul>
+        </section>
+
+        <!-- About You -->
+        <section class="dof-section">
+            <h2>About You</h2>
+            <p>You will have:</p>
+            <ul class="dof-list">
+                <li>An OFC/NZF A-Licence or B-Licence coaching qualification</li>
+                <li>Experience as a head coach at senior or representative level</li>
+                <li>A genuine passion for player development and a proven ability to improve players individually and collectively</li>
+                <li>The ability to lead, inspire and organise a coaching team across multiple age groups and programmes</li>
+                <li>The right to work in New Zealand and a current NZ driver's licence</li>
+                <li>A willingness to relocate to Wānaka and become part of the community</li>
+            </ul>
+        </section>
+
+    </div>
+
+    <!-- Bottom CTA -->
+    <div class="dof-cta">
+        <h2>Ready to Apply?</h2>
+        <p>Applications close when the right candidate is found. We encourage early expressions of interest.</p>
+        <a href="https://form.asana.com/?k=6qTjlAk7lVqTCroyz0yk4A&d=1210704782452555" target="_blank" rel="noopener" class="dof-apply-btn">Apply Now</a>
+    </div>
+
+    <footer class="site-footer">
+        <div class="footer-container">
+            <div class="footer-left">
+                <div class="social-icons">
+                    <a href="https://www.facebook.com/wanakaafc/" target="_blank" class="social-icon facebook" aria-label="Facebook">
+                        <i class="fab fa-facebook-f"></i>
+                    </a>
+                    <a href="https://www.instagram.com/wanakafc/?hl=en" target="_blank" class="social-icon instagram" aria-label="Instagram">
+                        <i class="fab fa-instagram"></i>
+                    </a>
+                </div>
+            </div>
+            <div class="footer-right">
+                <p>Built by <a href="https://edybe.github.io/EB-Studios/" target="_blank">EB Studios</a></p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
